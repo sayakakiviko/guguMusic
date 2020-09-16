@@ -1,0 +1,189 @@
+@import "base";
+
+body {
+  line-height: normal;
+  //background: #e6ecea;
+}
+
+body,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+hr,
+p,
+dl,
+dt,
+dd,
+ul,
+ol,
+li,
+button,
+input,
+textarea,
+th,
+td {
+  margin: 0;
+  padding: 0;
+}
+
+body,
+button,
+input,
+select,
+textarea {
+  font-family: 'helvetica neue', tahoma, 'hiragino sans gb', stheiti, 'wenquanyi micro hei', '微软雅黑', '宋体', sans-serif;
+}
+
+ul,
+ol {
+  list-style: none;
+}
+
+a {
+  text-decoration: none;
+  color: #535353;
+}
+
+a:hover {
+  text-decoration: none;
+  outline: 0;
+}
+
+a:active {
+  outline: 0;
+}
+
+img {
+  border: 0;
+}
+
+.no-wrap {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.ellipsis-clamp-1,
+.ellipsis-clamp-2,
+.ellipsis-clamp-3,
+.ellipsis-clamp-4,
+.ellipsis-clamp-5 {
+  overflow: hidden;
+  display: -webkit-box;
+  white-space: normal;
+  -webkit-box-orient: vertical;
+}
+
+.ellipsis-clamp-1 {
+  -webkit-line-clamp: 1;
+  line-clamp: 1;
+}
+
+.ellipsis-clamp-2 {
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+}
+
+.ellipsis-clamp-3 {
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+}
+
+.ellipsis-clamp-4 {
+  -webkit-line-clamp: 4;
+  line-clamp: 4;
+}
+
+.ellipsis-clamp-5 {
+  -webkit-line-clamp: 5;
+  line-clamp: 5;
+}
+
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+/* 修正html根字体对弹层的影响*/
+.weui-dialog,
+.weui-toast {
+  font-size: 14px;
+}
+
+.weui-tab__panel {
+  padding-bottom: 96 / @rem;
+}
+
+.vux-header {
+  .vux-header-left {
+    left: 20 / @rem;
+    top: 20 / @rem;
+    color: #fff;
+    z-index: 2;
+  }
+}
+
+.vux-header-title-area,
+.vux-header .vux-header-title {
+  height: 80 / @rem;
+  .fz(38);
+  line-height: 80 / @rem;
+}
+
+.weui-tabbar {
+  background: #fff;
+  box-shadow: #ecf0f1 0 0 6 / @rem 1 / @rem;
+}
+
+.weui-tabbar__label {
+  color: #666666;
+  .fz(24);
+  line-height: 42 / @rem;
+}
+
+.weui-tabbar__icon {
+  width: auto;
+  height: 44 / @rem;
+
+  img {
+    width: auto;
+  }
+}
+
+.weui-tabbar__item {
+  padding-top: 11 / @rem;
+}
+
+.weui-grid__icon {
+  width: auto;
+  height: auto;
+}
+
+
+@font-face {
+  font-family: 'iconfont';
+  src: url('//at.alicdn.com/t/font_745536_tjcw2qg1w18.eot?t=1531402211280');
+  /* IE9*/
+  src: url('//at.alicdn.com/t/font_745536_tjcw2qg1w18.eot?t=1531402211280#iefix') format('embedded-opentype'),
+    /* IE6-IE8 */
+    url('data:application/x-font-woff;charset=utf-8;base64,d09GRgABAAAAAAVEAAsAAAAAB7QAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAABHU1VCAAABCAAAADMAAABCsP6z7U9TLzIAAAE8AAAARAAAAFZW7kmYY21hcAAAAYAAAABeAAABhp/wBr5nbHlmAAAB4AAAAXUAAAGgRzVR4mhlYWQAAANYAAAALwAAADYR+jW8aGhlYQAAA4gAAAAcAAAAJAfeA4RobXR4AAADpAAAAAwAAAAMC+kAAGxvY2EAAAOwAAAACAAAAAgAdgDQbWF4cAAAA7gAAAAfAAAAIAESAF1uYW1lAAAD2AAAAUUAAAJtPlT+fXBvc3QAAAUgAAAAIQAAADJ2ht98eJxjYGRgYOBikGPQYWB0cfMJYeBgYGGAAJAMY05meiJQDMoDyrGAaQ4gZoOIAgCKIwNPAHicY2Bk/sE4gYGVgYOpk+kMAwNDP4RmfM1gxMjBwMDEwMrMgBUEpLmmMDgwVDxfx9zwv4EhhrmBoQEozAiSAwAwWg0beJzFkMENgDAMAy9t6QMxCA8G4sUcnaprdYxiQnkwQS05VhxLiQIsQBQPMYFdGA9OueZ+ZHU/eSZLjUBptXf1nyqiWXYNKplpsHmr/9i87qPTVyiDOrHVl4QbEskOSwAAeJxFj01Kw1AUhd95z+S12r5qkiZt2vQnsY2iCTbWKFXTSZEqDgQ7EUfOUlCnijhwoCLSgWsQwU24GdEVuIBq/AEvF75zL3yDQyRCPl/ZCysQlcyRFumRPUIgL8AW1ELdbft0Afm6lDc0wVzHrXPH9tkmDFvW9CBsNw2ZyzkIVLBcD0LXpy5W2hFdR6BbQLFk7iuNssIeMFlwKzfjHfqIfNUp5yJvvL3Y1YKamjrLKEpRUUYpWZJSlE7kBE4MPS2lJ+Xxk5Qz8y/VeVpFpuiauwfZWkk5umufWg0jDVxdQS3VxHN3xpxJ9tLUVaXIp7Opgpl1ZjWcvU8V1IzVfCPJ0KTrBztngsyTDiENH64TYTWBAK/A4IJy3VgOVyMWVKjxE5uwfZr0SR6aoOzQintYCsFGw+GIIVxCL16j4Bsc1BscXxwPvL9rfO9ELdNsRVu/uO7Flh13Eytxu7GNcnzb5wDvDAeeNxh2vnMfc//GN74ApglCggAAAHicY2BkYGAA4uNXPTPi+W2+MnCzMIDA9dyKxwj6/0MWBmYJIJeDgQkkCgBJvgtFAHicY2BkYGBu+N/AEMPCAAJAkpEBFTADAEcJAmwEAAAAA+kAAAQAAAAAAAAAAHYA0HicY2BkYGBgZghkYGUAASYg5gJCBob/YD4DABD3AXAAeJxlj01OwzAQhV/6B6QSqqhgh+QFYgEo/RGrblhUavdddN+mTpsqiSPHrdQDcB6OwAk4AtyAO/BIJ5s2lsffvHljTwDc4Acejt8t95E9XDI7cg0XuBeuU38QbpBfhJto41W4Rf1N2MczpsJtdGF5g9e4YvaEd2EPHXwI13CNT+E69S/hBvlbuIk7/Aq30PHqwj7mXle4jUcv9sdWL5xeqeVBxaHJIpM5v4KZXu+Sha3S6pxrW8QmU4OgX0lTnWlb3VPs10PnIhVZk6oJqzpJjMqt2erQBRvn8lGvF4kehCblWGP+tsYCjnEFhSUOjDFCGGSIyujoO1Vm9K+xQ8Jee1Y9zed0WxTU/3OFAQL0z1xTurLSeTpPgT1fG1J1dCtuy56UNJFezUkSskJe1rZUQuoBNmVXjhF6XNGJPyhnSP8ACVpuyAAAAHicY2BigAAuBuyAmZGJkZmRhYGxgqW0OLWIgQEADsgCWAAAAA==') format('woff'),
+    url('//at.alicdn.com/t/font_745536_tjcw2qg1w18.ttf?t=1531402211280') format('truetype'),
+    /* chrome, firefox, opera, Safari, Android, iOS 4.2+*/
+    url('//at.alicdn.com/t/font_745536_tjcw2qg1w18.svg?t=1531402211280#iconfont') format('svg');
+  /* iOS 4.1- */
+}
+
+.iconfont {
+  font-family: 'iconfont' !important;
+  font-size: 16px;
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-user:before {
+  content: '\e7ae';
+}
