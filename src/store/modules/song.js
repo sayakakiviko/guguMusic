@@ -12,9 +12,9 @@ export default {
     playList: [], //播放列表
     sequenceList: [], //歌曲列表
     playMode: 'order', //播放模式
-    currentIndex: -1, //当前播放歌曲位于列表的位置
+    currentIndex: -1 //当前播放歌曲位于列表的位置
   },
-  getters: {
+  /*getters: {
     singer(state) {
       return state.singer;
     },
@@ -38,16 +38,34 @@ export default {
     },
     currentSong(state) {
       return state.playList[state.currentIndex];
-    },
-  },
+    }
+  },*/
   mutations: {
-    SET_USERINFO(states, user) {
-      states.user = { ...states.user, ...user };
+    SET_SINGER(state, singer) {
+      state.singer = singer;
     },
+    SET_PLAYING(state, playing) {
+      state.playing = playing;
+    },
+    SET_FULLSCREEN(state, fullScreen) {
+      state.fullScreen = fullScreen;
+    },
+    SET_PLAYLIST(state, playList) {
+      state.playList = playList;
+    },
+    SET_SEQUENCELIST(state, sequenceList) {
+      state.sequenceList = sequenceList;
+    },
+    SET_PLAYMODE(state, playMode) {
+      state.playMode = playMode;
+    },
+    SET_CURRENTINDEX(state, currentIndex) {
+      state.currentIndex = currentIndex;
+    }
   },
   actions: {
     getUserInfo({ commit, state }, params) {
       return {};
-    },
-  },
+    }
+  }
 };

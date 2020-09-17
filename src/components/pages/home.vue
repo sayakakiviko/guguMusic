@@ -3,6 +3,7 @@
 <template>
   <div class="home">
     <van-pull-refresh v-model="isLoading" @refresh="onRefresh">
+      <button @click="SET_PLAYING(true)">click</button>
       <van-swipe
         v-if="bannerList.length"
         class="swipe"
@@ -49,6 +50,7 @@
 </template>
 
 <script>
+import { mapState, mapMutations } from 'vuex';
 export default {
   data() {
     return {
@@ -66,6 +68,7 @@ export default {
     this.getNewSong(0);
   },
   methods: {
+    ...mapMutations(['SET_PLAYING']),
     /**
      * 获取轮播图列表
      */
@@ -104,9 +107,9 @@ export default {
     onRefresh() {
       this.bannerList = [];
       this.newSongList = [];
+      this.isLoading = false;
       this.getBanner();
       this.getNewSong(0);
-      this.isLoading = false;
     }
   }
 };

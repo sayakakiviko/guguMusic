@@ -1,15 +1,17 @@
 <!-- @format -->
 
 <template>
-  <div class="rank">排行</div>
+  <div class="rank">排行{{ playing }}</div>
 </template>
 
 <script>
+import { mapState, mapMutations } from 'vuex';
 export default {
   data() {
     return {};
   },
   created() {},
+  computed: mapState(['playing']),
   methods: {}
 };
 </script>
