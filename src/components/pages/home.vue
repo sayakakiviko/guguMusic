@@ -3,7 +3,7 @@
 <template>
   <div class="home">
     <van-pull-refresh v-model="isLoading" @refresh="onRefresh">
-      <button @click="SET_PLAYING(true)">click</button>
+      <!--<button @click="SET_PLAYING(true)">click</button>-->
       <van-swipe
         v-if="bannerList.length"
         class="swipe"

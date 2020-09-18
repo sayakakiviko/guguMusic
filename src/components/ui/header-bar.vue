@@ -38,7 +38,7 @@ export default {
 .header-bar {
   position: sticky;
   top: 0;
-  z-index: 1;
+  z-index: 10;
   padding: 0.1rem 0;
   background-color: #222;
   .title {

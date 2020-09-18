@@ -23,7 +23,6 @@ export default {
      * 无论在什么设备下，我们页面的总宽度都是7.5rem，所以我们直接在设计图上测量px单位的尺寸，然后除以100转换成rem单位后直接使用就可以了
      * 比如，在设计图中测量一个元素的尺寸为200px，那么转换成rem单位就是 200 / 100 = 2rem
      */
-    var html = document.querySelector('html');
     changeRem();
     window.addEventListener('resize', changeRem);
 
