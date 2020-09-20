@@ -6,34 +6,36 @@
 import Vue from 'vue';
 
 import {
-  Dialog,
-  Loading,
-  PullRefresh,
   Button,
   Cell,
   CellGroup,
-  List,
-  DatetimePicker,
-  Tab,
-  Tabs,
-  Swipe,
-  SwipeItem,
+  Dialog,
   IndexBar,
   IndexAnchor,
+  Icon,
+  Loading,
+  List,
+  PullRefresh,
+  Popup,
+  Swipe,
+  SwipeItem,
+  Tab,
+  Tabs,
   Toast
 } from 'vant';
-Vue.use(Dialog);
-Vue.use(Loading);
-Vue.use(PullRefresh);
 Vue.use(Button);
 Vue.use(Cell);
 Vue.use(CellGroup);
-Vue.use(List);
-Vue.use(DatetimePicker);
-Vue.use(Tab);
-Vue.use(Tabs);
-Vue.use(Swipe);
-Vue.use(SwipeItem);
+Vue.use(Dialog);
 Vue.use(IndexBar);
 Vue.use(IndexAnchor);
+Vue.use(Icon);
+Vue.use(Loading);
+Vue.use(List);
+Vue.use(PullRefresh);
+Vue.use(Popup);
+Vue.use(Swipe);
+Vue.use(SwipeItem);
+Vue.use(Tab);
+Vue.use(Tabs);
 Vue.use(Toast);

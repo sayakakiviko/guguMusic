@@ -22,7 +22,17 @@ export default [
     desc: '歌手',
     components: {
       default: getPage('singer')
-    }
+    },
+    children: [
+      {
+        path: '/singerDetail',
+        name: 'singerDetail',
+        desc: '歌手详情',
+        components: {
+          default: getPage('detail/singerDetail')
+        }
+      }
+    ]
   },
   {
     path: '/rank',
@@ -40,6 +50,14 @@ export default [
       default: getPage('search')
     }
   }
+  // {
+  //   path: '/singerDetail',
+  //   name: 'singerDetail',
+  //   desc: '歌手详情',
+  //   components: {
+  //     default: getPage('detail/singerDetail')
+  //   }
+  // }
 ];
 /*const TEACHER = [
   /!**老师*!/

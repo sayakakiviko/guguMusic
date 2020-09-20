@@ -135,6 +135,22 @@ Vue.directive('open', {
   }
 });
 /**
+ * Vue 页面返回
+ * 例子：<div v-back>返回</div>
+ */
+Vue.directive('back', {
+  bind: function(el, binding, vnode) {
+    el.handler = function(e) {
+      e.stopPropagation();
+      history.go(-1);
+    };
+    el.addEventListener('click', el.handler, true);
+  },
+  unbind: function(el) {
+    el.removeEventListener('click', el.handler);
+  }
+});
+/**
  * Vue input限制只能输入正整数（可控制最小最大值）
  * 例子：<input type="text" v-integer="{min:1, max:10}">
  */
@@ -161,22 +177,6 @@ Vue.directive('integer', {
   },
   unbind: function(el) {
     el.removeEventListener('input', el.handler);
-  }
-});
-/**
- * Vue 页面返回
- * 例子：<div v-back>返回</div>
- */
-Vue.directive('back', {
-  bind: function(el, binding, vnode) {
-    el.handler = function(e) {
-      e.stopPropagation();
-      history.go(-1);
-    };
-    el.addEventListener('click', el.handler, true);
-  },
-  unbind: function(el) {
-    el.removeEventListener('click', el.handler);
   }
 });
 /**

@@ -42,5 +42,11 @@ body {
   width: 100%;
   background-color: #222;
   font-size: 0.16rem;
+  .van-icon-arrow-left {
+    position: absolute;
+    left: 0.2rem;
+    top: 0.2rem;
+    z-index: 1;
+  }
 }
 </style>
