@@ -46,7 +46,7 @@ body {
     position: absolute;
     left: 0.2rem;
     top: 0.2rem;
-    z-index: 1;
+    z-index: 2;
   }
 }
 </style>

@@ -58,7 +58,7 @@ export default {
       isLoading: false, //是否正在下拉刷新
       loading: false, //列表是否正在加载
       finished: false, //列表数据否全部加载完
-      nowTime: 0,
+      nowTime: 0, //请求的时间戳，以便节流处理
       bannerList: [], //轮播图列表
       newSongList: [], //新歌速递列表
       pageNum: 0 //新歌列表页码
@@ -90,9 +90,7 @@ export default {
         this.newSongList.length >= res.totalCount && (this.finished = true); //数据全部加载完毕
       });
     },
-    /**
-     * 加载更多
-     */
+    /** 加载更多 */
     onLoad() {
       let time = Date.now();
       //节流处理
@@ -102,9 +100,7 @@ export default {
       }
       this.loading = false;
     },
-    /**
-     * 下拉刷新
-     */
+    /** 下拉刷新 */
     onRefresh() {
       this.bannerList = [];
       this.newSongList = [];

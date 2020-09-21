@@ -65,22 +65,17 @@ export function responseSuccessFunc(response) {
       (response.data.result || response.data.data) &&
       response.status === 200
     ) {
-      console.log(1);
       return response.data.result || response.data.data;
     } else if (response.status === 200) {
-      console.log(2);
       // 仅有状态消息返回时
       return response.statusText;
     } else if (response.data.md5) {
-      console.log(3);
       return response.data;
     } else {
       // 异常处理
       if (response.config.responseType === 'arraybuffer') {
-        console.log(4);
         return response.data;
       } else {
-        console.log(5);
         console.log('warning', response.data.msg || response.data.message);
         return Promise.reject(response && response.data && response.data.msg);
       }

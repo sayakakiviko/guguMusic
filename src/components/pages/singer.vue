@@ -14,7 +14,7 @@
           class="cell"
           v-for="(item, j) in obj.arr"
           :key="j"
-          v-jump="['singerDetail', { artistId: item.artistId }]"
+          v-jump="['singerDetail', { artistId: item.artistId, img: item.img }]"
         >
           <img :src="item.img" />
           <p>{{ item.name }}</p>
@@ -43,8 +43,7 @@ export default {
     //计算不同分辨率下锚点自动吸顶时与顶部的距离
     this.topPosition =
       this.topPosition *
-      (parseFloat(document.getElementsByTagName('html')[0].style.fontSize) /
-        100);
+      (parseFloat(document.documentElement.style.fontSize) / 100);
   },
   methods: {
     /** 获取歌手数据列表 */
