@@ -86,7 +86,7 @@ export default {
       this.$api['home/getNewSongList']({
         pageNo: pageNum
       }).then(res => {
-        this.newSongList = this.newSongList.concat(res.results);
+        this.newSongList.push(...res.results);
         this.newSongList.length >= res.totalCount && (this.finished = true); //数据全部加载完毕
       });
     },

@@ -48,5 +48,9 @@ body {
     top: 0.2rem;
     z-index: 2;
   }
+  .van-hairline--top-bottom::after,
+  .van-hairline-unset--top-bottom::after {
+    border-width: 0;
+  }
 }
 </style>

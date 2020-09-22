@@ -4,33 +4,62 @@
 <template>
   <div class="singer-detail">
     <van-icon name="arrow-left" color="#ffcd32" size="0.42rem" v-back />
-    <div class="singer-img" :class="{ fixed: isFixed }">
+    <div class="singer-img" :class="{ sticky: isSticky }">
       <div>
         <img :src="$route.query.img" />
         <p>{{ singerDetail.artistName }}</p>
       </div>
     </div>
-    <div class="song-list" :class="{ fixed: isFixed }" v-if="songList.length">
-      <!--<van-list finished-text="没有更多了" v-model="loading" @load="onLoad">-->
-      <div
-        class="cell"
-        v-for="item in songList"
-        :key="item.songId"
-        v-show="item.songName"
-      >
-        <p class="no-wrap">{{ item.songName }}</p>
-        <p class="no-wrap name">
-          <span v-for="(name, index) in item.singerName" :key="index">{{
-            name
-          }}</span>
-        </p>
-      </div>
-      <!--</van-list>-->
-      <!--<van-divider>文字</van-divider>-->
-    </div>
-    <van-loading v-else type="spinner" vertical style="margin-top: 1.5rem;"
-      >加载中...</van-loading
+    <!--tab标签-->
+    <van-tabs
+      v-model="active"
+      :class="{ sticky: isSticky }"
+      color="#ffcd32"
+      title-active-color="#ffcd32"
+      line-height="1px"
+      swipeable
+      animated
     >
+      <van-tab title="歌曲列表">
+        <div
+          class="song-list"
+          :class="{ sticky: isSticky }"
+          v-if="songList.length"
+        >
+          <div
+            class="cell"
+            v-for="item in songList"
+            :key="item.songId"
+            v-show="item.songName"
+          >
+            <p class="no-wrap">{{ item.songName }}</p>
+            <p class="no-wrap name">
+              <span v-for="(name, index) in item.singerName" :key="index">{{
+                name
+              }}</span>
+            </p>
+          </div>
+          <van-divider
+            v-if="finished"
+            :style="{
+              margin: 'auto',
+              width: '80%',
+              borderColor: '#666',
+              color: '#666'
+            }"
+            >已无更多</van-divider
+          >
+        </div>
+        <van-loading v-else type="spinner" vertical style="margin-top: 1.5rem;"
+          >加载中...</van-loading
+        >
+      </van-tab>
+      <van-tab title="歌手详情">
+        <p class="info" :class="{ sticky: isSticky }">
+          {{ singerDetail.intro }}
+        </p>
+      </van-tab>
+    </van-tabs>
   </div>
 </template>
 
@@ -38,10 +67,17 @@
 export default {
   data() {
     return {
+      active: 0, //tab激活项
+      tabScroll: [0, 0], //
       loading: false, //列表是否正在加载
-      isFixed: false, //滑动一定距离后背景图是否固定
-      topHigh: 275, //顶部标签栏应该空出的高度，基于750px
-      pageHeight: 0, //页面高度
+      finished: false, //列表数据否全部加载完
+      isSticky: false, //滑动一定距离后背景图是否固定
+      //页面上需要获取处理的高度
+      page: {
+        topHigh: 275, //顶部标签栏需空出的高度，基于750px
+        pageHeight: 0, //页面高度
+        clientHeight: document.documentElement.clientHeight //可视区高度
+      },
       singerId: 0, //歌手id
       singerDetail: {}, //歌手信息
       songList: [], //歌曲列表
@@ -52,12 +88,13 @@ export default {
   mounted() {
     this.singerId = this.$route.query.artistId;
     window.addEventListener('scroll', this.getScrollTop); //监听滚动事件
-    this.topHigh =
-      (this.topHigh * parseFloat(document.documentElement.style.fontSize)) /
+    this.page.topHigh =
+      (this.page.topHigh *
+        parseFloat(document.documentElement.style.fontSize)) /
       100; //计算应该空出的高度
 
     this.getDetail();
-    this.getSong();
+    this.getSong(0);
   },
   destroyed() {
     window.removeEventListener('scroll', this.getScrollTop); //解绑监听
@@ -71,34 +108,54 @@ export default {
         }
       );
     },
-    /** 获取歌手作品 */
-    getSong() {
+    /**
+     * 获取歌手作品
+     * @pageNum {number} 页码
+     * */
+    getSong(pageNum) {
       this.$api['singer/getSongList']({
         artistId: this.singerId,
-        pageNo: this.pageNum,
+        pageNo: pageNum,
         pageSize: 20
       }).then(res => {
-        this.songList = res.results;
+        if (res.results.length) {
+          res.results.length < 20 && (this.finished = true); //判断首次加载歌曲数量是否满足允许再次请求
+          this.songList.push(...res.results);
+        } else {
+          this.finished = true;
+        }
 
-        this.pageHeight = document.getElementsByClassName(
-          'singer-detail'
-        )[0].clientHeight;
+        // 获取页面高度
+        this.$nextTick(() => {
+          this.page.pageHeight = document.getElementsByClassName(
+            'singer-detail'
+          )[0].clientHeight;
+        });
       });
     },
     /** 获取页面滚动距离以固定顶部 */
     getScrollTop() {
-      this.isFixed = (window.pageYOffset >= this.topHigh && true) || false;
+      let page = this.page,
+        Y = window.pageYOffset, //滚动距离
+        time = Date.now(); //获取时间戳
+      this.isSticky = (Y >= page.topHigh && true) || false;
+
+      //页面滚动到底部，还有数据情况下加载数据并做节流处理
+      if (
+        !this.finished &&
+        page.pageHeight - page.clientHeight - 50 <= Y &&
+        time - this.nowTime > 200
+      ) {
+        this.getSong(++this.pageNum);
+        this.nowTime = time;
+      }
     },
-    /** 加载更多 */
-    onLoad() {
-      console.log(555);
-      // let time = Date.now();
-      // //节流处理
-      // if (time - this.nowTime > 200) {
-      //   this.getNewSong(++this.pageNum);
-      //   this.nowTime = time;
-      // }
-      // this.loading = false;
+    /** tab切换 */
+    changeTab() {
+      this.$set(this.tabScroll, this.active, window.pageYOffset);
+      // debugger;
+      console.log(this.active);
+      console.log(window.pageYOffset);
     }
   }
 };
@@ -121,7 +178,7 @@ export default {
     width: 100%;
     height: 3.6rem;
     background-image: url('~@/assets/images/singer-detail-bg.jpg');
-    &.fixed {
+    &.sticky {
       position: fixed;
       top: -2.75rem;
       z-index: 1;
@@ -151,29 +208,46 @@ export default {
       }
     }
   }
+  /deep/.van-tabs__nav {
+    background-color: #222;
+  }
+  /deep/.sticky .van-hairline--top-bottom {
+    position: fixed;
+    top: 0.85rem;
+    z-index: 1;
+    width: 100%;
+  }
   .song-list {
     padding: 0.3rem 0;
     background-color: #222;
     //transform: translateY(-3rem);
     /*transform: translateY(0);*/
     /*transition-duration: 0.3s;*/
-    &.fixed {
-      padding-top: 4rem;
+    &.sticky {
+      padding-top: 4.8rem;
     }
     .cell {
       padding: 0.15rem 0.4rem;
       p {
         font-size: 0.28rem;
-        color: #fff;
+        color: #b9b9b9;
         &.name {
           margin-top: 0.1rem;
+          color: #666;
           span {
             margin-right: 0.2rem;
             font-size: 0.26rem;
-            color: hsla(0, 0%, 100%, 0.3);
           }
         }
       }
+    }
+  }
+  .info {
+    padding: 0.3rem 0.4rem;
+    font-size: 0.28rem;
+    color: #b9b9b9;
+    &.sticky {
+      padding-top: 4.8rem;
     }
   }
 }

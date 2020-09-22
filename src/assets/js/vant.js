@@ -10,6 +10,7 @@ import {
   Cell,
   CellGroup,
   Dialog,
+  Divider,
   IndexBar,
   IndexAnchor,
   Icon,
@@ -27,6 +28,7 @@ Vue.use(Button);
 Vue.use(Cell);
 Vue.use(CellGroup);
 Vue.use(Dialog);
+Vue.use(Divider);
 Vue.use(IndexBar);
 Vue.use(IndexAnchor);
 Vue.use(Icon);

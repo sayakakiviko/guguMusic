@@ -30,6 +30,15 @@ export default {
     return {
       tabActive: 0 //tab选中项
     };
+  },
+  mounted() {
+    let arr = ['home', 'singer', 'rank', 'search'];
+    //根据路由设定tab的位置
+    setTimeout(() => {
+      this.tabActive = arr.findIndex(
+        value => value === this.$route.matched[0].name
+      );
+    }, 200);
   }
 };
 </script>
@@ -80,13 +89,9 @@ export default {
     height: 0.5rem;
     .van-tab {
       line-height: 0.5rem;
-      font-size: 0.14rem;
+      font-size: 0.16rem;
       color: #909090;
     }
-  }
-  /deep/.van-hairline--top-bottom::after,
-  /deep/.van-hairline-unset--top-bottom::after {
-    border-width: 0;
   }
 }
 </style>
