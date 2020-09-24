@@ -6,15 +6,18 @@
     <keep-alive>
       <router-view />
     </keep-alive>
+    <player></player>
   </div>
 </template>
 
 <script>
 import headerBar from './components/ui/header-bar'; //头部组件
+import player from './components/pages/player'; //头部组件
 export default {
   name: 'App',
   components: {
-    headerBar
+    headerBar,
+    player
   },
   created() {
     /**

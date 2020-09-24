@@ -26,9 +26,10 @@
         >
           <div
             class="cell"
-            v-for="item in songList"
+            v-for="(item, index) in songList"
             :key="item.songId"
             v-show="item.songName"
+            @click="selectSong(item, index)"
           >
             <p class="no-wrap">{{ item.songName }}</p>
             <p class="no-wrap name">
@@ -62,6 +63,7 @@
 </template>
 
 <script>
+import { mapMutations, mapActions } from 'vuex';
 export default {
   data() {
     return {
@@ -98,6 +100,8 @@ export default {
     window.removeEventListener('scroll', this.getScrollTop); //解绑监听
   },
   methods: {
+    // ...mapMutations(['SET_FULLSCREEN', 'SET_PLAYLIST']),
+    ...mapActions(['selectPlay']),
     /** 获取歌手详情 */
     getDetail() {
       this.$api['singer/getSingerDetail']({ artistId: this.singerId }).then(
@@ -151,9 +155,18 @@ export default {
     /** tab切换 */
     changeTab() {
       this.$set(this.tabScroll, this.active, window.pageYOffset);
-      // debugger;
-      console.log(this.active);
-      console.log(window.pageYOffset);
+    },
+    /**
+     * 点击播放歌曲
+     * @item {object} 歌曲数据对象
+     * @index {number} 歌曲在列表的下标
+     */
+    selectSong(item, index) {
+      // console.log(item);
+      // console.log(index);
+      // this.SET_FULLSCREEN(true);
+      // this.SET_PLAYLIST(this.songList);
+      this.selectPlay({ list: this.songList, index });
     }
   }
 };
