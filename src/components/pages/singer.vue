@@ -3,11 +3,7 @@
 
 <template>
   <div class="singer">
-    <van-index-bar
-      highlight-color="#ffcd32"
-      :sticky-offset-top="topPosition"
-      :index-list="indexList"
-    >
+    <van-index-bar :sticky-offset-top="topPosition" :index-list="indexList">
       <div class="area" v-for="(obj, i) in singerList" :key="i">
         <van-index-anchor :index="obj.key" />
         <div
@@ -64,14 +60,8 @@ export default {
     .van-hairline--bottom::after {
       display: none;
     }
-    .van-index-anchor {
-      background-color: #333;
-      color: #999;
-    }
     .van-index-bar__sidebar {
       padding: 0.2rem 0;
-      background-color: rgba(24, 24, 24, 0.5);
-      color: #999;
       border-radius: 0.2rem;
       .van-index-bar__index {
         padding: 0 0.08rem 0.04rem;
@@ -91,7 +81,6 @@ export default {
       display: inline-block;
       font-size: 0.26rem;
       line-height: 0.75rem;
-      color: #999;
     }
   }
 }

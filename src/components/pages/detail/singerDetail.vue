@@ -3,7 +3,7 @@
 
 <template>
   <div class="singer-detail">
-    <van-icon name="arrow-left" color="#ffcd32" size="0.42rem" v-back />
+    <van-icon name="arrow-left" size="0.42rem" v-back />
     <div class="singer-img" :class="{ sticky: isSticky }">
       <div>
         <img :src="$route.query.img" />
@@ -14,8 +14,6 @@
     <van-tabs
       v-model="active"
       :class="{ sticky: isSticky }"
-      color="#ffcd32"
-      title-active-color="#ffcd32"
       line-height="1px"
       swipeable
       animated
@@ -169,7 +167,6 @@ export default {
   z-index: 10;
   width: 100%;
   min-height: 100%;
-  background-color: #222;
   .van-icon-arrow-left {
     position: fixed;
   }
@@ -199,17 +196,13 @@ export default {
       text-align: center;
       font-size: 0.28rem;
       font-weight: bold;
-      color: #fff;
       img {
-        margin-bottom: 0.2rem;
+        margin-bottom: 0.3rem;
         width: 1.68rem;
         height: 1.68rem;
         border-radius: 50%;
       }
     }
-  }
-  /deep/.van-tabs__nav {
-    background-color: #222;
   }
   /deep/.sticky .van-hairline--top-bottom {
     position: fixed;
@@ -219,7 +212,6 @@ export default {
   }
   .song-list {
     padding: 0.3rem 0;
-    background-color: #222;
     //transform: translateY(-3rem);
     /*transform: translateY(0);*/
     /*transition-duration: 0.3s;*/
@@ -230,10 +222,8 @@ export default {
       padding: 0.15rem 0.4rem;
       p {
         font-size: 0.28rem;
-        color: #b9b9b9;
         &.name {
           margin-top: 0.1rem;
-          color: #666;
           span {
             margin-right: 0.2rem;
             font-size: 0.26rem;
@@ -245,7 +235,6 @@ export default {
   .info {
     padding: 0.3rem 0.4rem;
     font-size: 0.28rem;
-    color: #b9b9b9;
     &.sticky {
       padding-top: 4.8rem;
     }

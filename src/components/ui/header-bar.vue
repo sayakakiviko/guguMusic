@@ -3,19 +3,13 @@
   <div class="header-bar">
     <div class="title">
       <img src="../../assets/images/logo.gif" class="logo" />
-      <h1 class="title">咕咕~</h1>
-      <div class="user">
+      <h1 class="tit">咕咕~</h1>
+      <div class="user" @click="changeTheme('light')">
         <i class="iconfont icon-user"></i>
       </div>
     </div>
     <!--tab选项卡的切换-->
-    <van-tabs
-      v-model="tabActive"
-      background="#222"
-      color="#ffcd32"
-      title-active-color="#ffcd32"
-      line-height="1px"
-    >
+    <van-tabs v-model="tabActive" line-height="1px">
       <van-tab title="首页" to="home"></van-tab>
       <van-tab title="歌手" to="singer"></van-tab>
       <van-tab title="排行" to="rank"></van-tab>
@@ -39,6 +33,11 @@ export default {
         value => value === this.$route.matched[0].name
       );
     }, 200);
+  },
+  methods: {
+    changeTheme(theme) {
+      document.getElementById('app').className = theme;
+    }
   }
 };
 </script>
@@ -49,7 +48,6 @@ export default {
   top: 0;
   z-index: 10;
   padding: 0.1rem 0;
-  background-color: #222;
   .title {
     margin-bottom: 0.1rem;
     text-align: center;
@@ -61,10 +59,9 @@ export default {
       vertical-align: middle;
       border-radius: 50%;
     }
-    .title {
+    .tit {
       display: inline-block;
       font-size: 0.24rem;
-      color: #ffcd32;
     }
     .user {
       position: absolute;
@@ -73,7 +70,6 @@ export default {
       padding: 0.15rem;
       width: 0.2rem;
       height: 0.2rem;
-      color: #ffcd32;
       font-size: 0.2rem;
       .iconfont {
         position: absolute;
@@ -90,7 +86,6 @@ export default {
     .van-tab {
       line-height: 0.5rem;
       font-size: 0.16rem;
-      color: #909090;
     }
   }
 }

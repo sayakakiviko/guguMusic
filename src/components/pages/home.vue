@@ -129,7 +129,6 @@ export default {
     text-align: center;
     font-size: 0.16rem;
     line-height: 2;
-    color: #ffcd32;
   }
   /deep/.van-loading__text {
     font-size: 0.18rem;
@@ -145,10 +144,8 @@ export default {
     }
     .con {
       font-size: 0.3rem;
-      color: #fff;
       .name {
         margin-top: 0.3rem;
-        color: #888;
         span {
           margin-right: 0.2rem;
         }

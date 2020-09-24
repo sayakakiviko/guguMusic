@@ -40,7 +40,6 @@ body {
   overflow-x: hidden;
   height: 100%;
   width: 100%;
-  background-color: #222;
   font-size: 0.16rem;
   .van-icon-arrow-left {
     position: absolute;

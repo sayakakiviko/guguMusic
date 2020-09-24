@@ -1,13 +1,14 @@
 /** @format */
 import 'babel-polyfill';
-import '@/assets/styles/revise.less';
 import 'vant/lib/index.less';
+import '@/assets/styles/revise.less';
+import '@/assets/styles/theme/theme.less';
 
 import Vue from 'vue';
 import App from './App';
 
-import '@/assets/js/common';
 import '@/assets/js/vant';
+import '@/assets/js/common';
 import '@/assets/images/svg/iconfont';
 
 // 导入插件
