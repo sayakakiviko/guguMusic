@@ -54,5 +54,11 @@ body {
   .van-hairline-unset--top-bottom::after {
     border-width: 0;
   }
+  .icon-svg {
+    width: 0.42rem;
+    height: 0.42rem;
+    vertical-align: middle;
+    color: #ffcd32;
+  }
 }
 </style>

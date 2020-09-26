@@ -3,7 +3,7 @@
 
 <template>
   <div class="singer-detail">
-    <van-icon name="arrow-left" size="0.42rem" v-back />
+    <van-icon name="arrow-left" size="0.4rem" v-back />
     <div class="singer-img" :class="{ sticky: isSticky }">
       <div>
         <img :src="$route.query.img" />
@@ -63,7 +63,7 @@
 </template>
 
 <script>
-import { mapMutations, mapActions } from 'vuex';
+import { mapActions } from 'vuex';
 export default {
   data() {
     return {
@@ -100,7 +100,6 @@ export default {
     window.removeEventListener('scroll', this.getScrollTop); //解绑监听
   },
   methods: {
-    // ...mapMutations(['SET_FULLSCREEN', 'SET_PLAYLIST']),
     ...mapActions(['selectPlay']),
     /** 获取歌手详情 */
     getDetail() {

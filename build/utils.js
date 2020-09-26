@@ -33,10 +33,10 @@ exports.cssLoaders = function(options) {
     options: {
       sourceMap: options.sourceMap,
       plugins: [
-        pxtorem({
-          rootValue: 50,
-          propList: ['*']
-        })
+        // pxtorem({
+        //   rootValue: 50,
+        //   propList: ['*']
+        // })
       ]
     },
   };

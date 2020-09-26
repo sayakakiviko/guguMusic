@@ -1,14 +1,7 @@
 <!-- @format -->
+<!--用法 <icon-svg class="icon-svg" name="icon-user"></icon-svg>-->
 <template>
-  <svg
-    :style="{
-      fill: 'currentColor',
-      overflow: 'hidden',
-      'vertical-align': 'middle'
-    }"
-    :class="getClassName"
-    aria-hidden="true"
-  >
+  <svg :class="getClassName" aria-hidden="true">
     <use :xlink:href="getName"></use>
   </svg>
 </template>
@@ -33,7 +26,7 @@ export default {
   },
   computed: {
     getName() {
-      return `#icon-${this.name}`;
+      return `#${this.name}`;
     },
     getClassName() {
       return [

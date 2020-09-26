@@ -9,7 +9,7 @@ export default {
     singer: {}, //歌手
     playing: false, //是否正在播放
     fullScreen: true, //是否位于播放页
-    playList: [], //播放列表，实际播放顺序的列表（代码看）
+    playList: [1], //播放列表，实际播放顺序的列表（代码看）
     songList: [], //歌曲列表，即mini模式的歌曲列表（人看）
     playMode: 'order', //播放模式
     currentIndex: -1 //当前播放歌曲位于列表的位置

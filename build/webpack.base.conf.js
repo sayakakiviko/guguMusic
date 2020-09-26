@@ -89,10 +89,11 @@ let webpackConfig = {
           preserveWhitespace: false,
           postcss: [
             autoprefixer({ browsers: packageJson.browserslist }),
-            pxtorem({
-              rootValue: 50,
-              propList: ['*']
-          })],
+          //   pxtorem({
+          //     rootValue: 50,
+          //     propList: ['*']
+          // })
+          ],
           // extractCSS: true,
         }
       },
