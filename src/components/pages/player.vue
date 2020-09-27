@@ -5,7 +5,7 @@
   <div class="player" v-show="playList.length">
     <div class="normal-player" v-show="fullScreen">
       <div class="top">
-        <van-icon name="arrow-down" size="0.4rem" />
+        <van-icon name="arrow-down" size="0.4rem" @click="close" />
         <h2 class="song-name van-ellipsis">枫</h2>
         <h3 class="author van-ellipsis">周杰伦</h3>
       </div>
@@ -19,8 +19,15 @@
       </div>
       <div class="bottom">
         <div class="option">
-          <icon-svg class="icon-svg" name="icon-like"></icon-svg>
-          <icon-svg class="icon-svg" name="icon-more"></icon-svg>
+          <i @click="songState.like = !songState.like"
+            ><icon-svg
+              class="icon-svg"
+              :name="(songState.like && 'icon-like-fill') || 'icon-like'"
+            ></icon-svg
+          ></i>
+          <i @click="clickMore"
+            ><icon-svg class="icon-svg" name="icon-more"></icon-svg
+          ></i>
         </div>
         <!--进度条-->
         <div class="progress-warp">
@@ -32,16 +39,52 @@
         </div>
         <!--操作区-->
         <div class="handle">
-          <icon-svg class="icon-svg" name="icon-random"></icon-svg>
-          <icon-svg class="icon-svg" name="icon-prev"></icon-svg>
-          <icon-svg class="icon-svg mid" name="icon-play"></icon-svg>
-          <icon-svg class="icon-svg" name="icon-next"></icon-svg>
-          <icon-svg class="icon-svg" name="icon-playlist"></icon-svg>
+          <i @click="changMode"
+            ><icon-svg class="icon-svg" name="icon-order"></icon-svg
+          ></i>
+          <i @click="prevSong"
+            ><icon-svg class="icon-svg" name="icon-prev"></icon-svg
+          ></i>
+          <i @click="playSong"
+            ><icon-svg
+              class="icon-svg mid"
+              :name="(playing && 'icon-pause') || 'icon-play'"
+            ></icon-svg
+          ></i>
+          <i @click="nextSong"
+            ><icon-svg class="icon-svg" name="icon-next"></icon-svg
+          ></i>
+          <i @click="showSongList"
+            ><icon-svg class="icon-svg" name="icon-playlist"></icon-svg
+          ></i>
         </div>
       </div>
     </div>
     <div class="mini-player" v-show="!fullScreen"></div>
-    <!--    <van-popup v-model="show" round position="bottom" :style="{ height: '60%' }" />-->
+    <!--歌曲列表弹窗-->
+    <van-popup
+      v-model="isShowList"
+      round
+      position="bottom"
+      :style="{ height: '60%' }"
+    >
+      <div class="header">
+        <i @click="changMode"
+          ><icon-svg class="icon-svg mode" name="icon-order"></icon-svg
+        ></i>
+        <span>顺序播放</span>
+        <i @click="deleteAll"
+          ><icon-svg class="icon-svg" name="icon-delete"></icon-svg
+        ></i>
+      </div>
+      <!--歌曲列表-->
+      <div class="song-list">
+        <ul>
+          <li></li>
+        </ul>
+      </div>
+      <!--<icon-svg class="icon-svg" name="icon-song"></icon-svg>-->
+    </van-popup>
   </div>
 </template>
 
@@ -49,12 +92,35 @@
 import { mapState, mapMutations } from 'vuex';
 export default {
   data() {
-    return {};
+    return {
+      songState: {
+        like: false, //是否喜欢歌曲
+        playing: false //是否正在播放歌曲
+      },
+      isShowList: true //歌曲列表是否显示
+    };
   },
   created() {},
-  computed: mapState(['playList', 'fullScreen']),
+  computed: mapState(['playing', 'playMode', 'playList', 'fullScreen']),
   methods: {
-    ...mapMutations(['SET_FULLSCREEN'])
+    ...mapMutations(['SET_FULLSCREEN', 'SET_PLAYING']),
+    /** 关闭播放页 */
+    close() {
+      this.SET_FULLSCREEN(false);
+    },
+    clickMore() {},
+    changMode() {},
+    prevSong() {},
+    nextSong() {},
+    /**
+     * 播放/暂停歌曲
+     * @id {string} id
+     * */
+    playSong() {
+      this.SET_PLAYING(!this.playing);
+    },
+    showSongList() {},
+    deleteAll() {}
   }
 };
 </script>
@@ -126,6 +192,9 @@ export default {
       .icon-svg {
         width: 30px;
         height: 30px;
+        &.icon-svg__icon-like-fill {
+          color: #d93f30;
+        }
       }
     }
     .progress-warp {
@@ -174,6 +243,30 @@ export default {
           width: 42px;
           height: 42px;
         }
+      }
+    }
+  }
+  .van-popup {
+    box-sizing: border-box;
+    padding: 20px;
+    background-color: #333;
+    .icon-svg {
+      width: 30px;
+      height: 30px;
+      &.mode {
+        margin-right: 10px;
+      }
+      &.icon-svg__icon-delete {
+        height: 22px;
+        color: #666;
+      }
+    }
+    .header {
+      display: flex;
+      align-items: center;
+      color: #999;
+      span {
+        flex: 1;
       }
     }
   }
