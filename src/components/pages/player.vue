@@ -54,7 +54,7 @@
           <i @click="nextSong"
             ><icon-svg class="icon-svg" name="icon-next"></icon-svg
           ></i>
-          <i @click="showSongList"
+          <i @click="isShowList = true"
             ><icon-svg class="icon-svg" name="icon-playlist"></icon-svg
           ></i>
         </div>
@@ -66,6 +66,7 @@
       v-model="isShowList"
       round
       position="bottom"
+      :duration="0.15"
       :style="{ height: '60%' }"
     >
       <div class="header">
@@ -78,17 +79,182 @@
         ></i>
       </div>
       <!--歌曲列表-->
-      <div class="song-list">
+      <div class="song-list" ref="songList">
         <ul>
-          <li></li>
+          <li @click="deleteAll">
+            <icon-svg class="icon-svg" name="icon-sing"></icon-svg>
+            <p>
+              <span>枫</span>
+              -
+              <span>周杰伦</span>
+            </p>
+            <van-icon name="cross" />
+          </li>
+          <li>
+            <icon-svg
+              class="icon-svg"
+              name="icon-sing"
+              v-show="false"
+            ></icon-svg>
+            <p>
+              <span>枫</span>
+              -
+              <span>周杰伦</span>
+            </p>
+            <van-icon name="cross" />
+          </li>
+          <li>
+            <icon-svg
+              class="icon-svg"
+              name="icon-sing"
+              v-show="false"
+            ></icon-svg>
+            <p>
+              <span>枫</span>
+              -
+              <span>周杰伦</span>
+            </p>
+            <van-icon name="cross" />
+          </li>
+          <li>
+            <icon-svg
+              class="icon-svg"
+              name="icon-sing"
+              v-show="false"
+            ></icon-svg>
+            <p>
+              <span>枫</span>
+              -
+              <span>周杰伦</span>
+            </p>
+            <van-icon name="cross" />
+          </li>
+          <li>
+            <icon-svg
+              class="icon-svg"
+              name="icon-sing"
+              v-show="false"
+            ></icon-svg>
+            <p>
+              <span>枫</span>
+              -
+              <span>周杰伦</span>
+            </p>
+            <van-icon name="cross" />
+          </li>
+          <li>
+            <icon-svg
+              class="icon-svg"
+              name="icon-sing"
+              v-show="false"
+            ></icon-svg>
+            <p>
+              <span>枫</span>
+              -
+              <span>周杰伦</span>
+            </p>
+            <van-icon name="cross" />
+          </li>
+          <li>
+            <icon-svg
+              class="icon-svg"
+              name="icon-sing"
+              v-show="false"
+            ></icon-svg>
+            <p>
+              <span>枫</span>
+              -
+              <span>周杰伦</span>
+            </p>
+            <van-icon name="cross" />
+          </li>
+          <li>
+            <icon-svg
+              class="icon-svg"
+              name="icon-sing"
+              v-show="false"
+            ></icon-svg>
+            <p>
+              <span>枫</span>
+              -
+              <span>周杰伦</span>
+            </p>
+            <van-icon name="cross" />
+          </li>
+          <li>
+            <icon-svg
+              class="icon-svg"
+              name="icon-sing"
+              v-show="false"
+            ></icon-svg>
+            <p>
+              <span>枫</span>
+              -
+              <span>周杰伦</span>
+            </p>
+            <van-icon name="cross" />
+          </li>
+          <li>
+            <icon-svg
+              class="icon-svg"
+              name="icon-sing"
+              v-show="false"
+            ></icon-svg>
+            <p>
+              <span>枫</span>
+              -
+              <span>周杰伦</span>
+            </p>
+            <van-icon name="cross" />
+          </li>
+          <li>
+            <icon-svg
+              class="icon-svg"
+              name="icon-sing"
+              v-show="false"
+            ></icon-svg>
+            <p>
+              <span>枫</span>
+              -
+              <span>周杰伦</span>
+            </p>
+            <van-icon name="cross" />
+          </li>
+          <li>
+            <icon-svg
+              class="icon-svg"
+              name="icon-sing"
+              v-show="false"
+            ></icon-svg>
+            <p>
+              <span>枫</span>
+              -
+              <span>周杰伦</span>
+            </p>
+            <van-icon name="cross" />
+          </li>
+          <li>
+            <icon-svg
+              class="icon-svg"
+              name="icon-sing"
+              v-show="false"
+            ></icon-svg>
+            <p>
+              <span>枫</span>
+              -
+              <span>周杰伦</span>
+            </p>
+            <van-icon name="cross" />
+          </li>
         </ul>
       </div>
-      <!--<icon-svg class="icon-svg" name="icon-song"></icon-svg>-->
+      <div class="close-list" @click="isShowList = false">关闭</div>
     </van-popup>
   </div>
 </template>
 
 <script>
+// import BScroll from 'better-scroll';
 import { mapState, mapMutations } from 'vuex';
 export default {
   data() {
@@ -100,7 +266,15 @@ export default {
       isShowList: true //歌曲列表是否显示
     };
   },
-  created() {},
+  created() {
+    // this.$nextTick(() => {
+    //   new BScroll(this.$refs.songList, {
+    //     tap: true,
+    //     click: true,
+    //     mouseWheel: true
+    //   });
+    // });
+  },
   computed: mapState(['playing', 'playMode', 'playList', 'fullScreen']),
   methods: {
     ...mapMutations(['SET_FULLSCREEN', 'SET_PLAYING']),
@@ -119,8 +293,9 @@ export default {
     playSong() {
       this.SET_PLAYING(!this.playing);
     },
-    showSongList() {},
-    deleteAll() {}
+    deleteAll() {
+      console.log(1);
+    }
   }
 };
 </script>
@@ -248,8 +423,10 @@ export default {
   }
   .van-popup {
     box-sizing: border-box;
-    padding: 20px;
+    padding: 20px 20px 0;
     background-color: #333;
+    font-size: 14px;
+    color: #fff;
     .icon-svg {
       width: 30px;
       height: 30px;
@@ -257,6 +434,7 @@ export default {
         margin-right: 10px;
       }
       &.icon-svg__icon-delete {
+        width: 22px;
         height: 22px;
         color: #666;
       }
@@ -264,10 +442,38 @@ export default {
     .header {
       display: flex;
       align-items: center;
-      color: #999;
+      margin-bottom: 10px;
       span {
         flex: 1;
       }
+    }
+    .song-list {
+      overflow: hidden;
+      height: 80%;
+      li {
+        display: flex;
+        position: relative;
+        align-items: center;
+        padding-left: 22px;
+        line-height: 40px;
+        .icon-svg {
+          position: absolute;
+          left: 0;
+          width: 16px;
+          height: 16px;
+        }
+        p {
+          flex: 1;
+        }
+      }
+    }
+    .close-list {
+      position: absolute;
+      bottom: 8px;
+      width: 90%;
+      text-align: center;
+      font-size: 16px;
+      line-height: 30px;
     }
   }
 }
