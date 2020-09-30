@@ -1,7 +1,7 @@
 <!-- @format -->
 
 <template>
-  <div id="app">
+  <div id="app" :class="{ pt60: $store.state.miniMode }">
     <headerBar></headerBar>
     <keep-alive>
       <router-view />
@@ -59,6 +59,9 @@ body {
     height: 0.42rem;
     vertical-align: middle;
     color: #ffcd32;
+  }
+  .pt60 {
+    padding-bottom: 50px;
   }
 }
 </style>

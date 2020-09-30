@@ -55,7 +55,6 @@ export default {
 
 <style lang="less" scoped>
 .singer {
-  padding-bottom: 0.2rem;
   /deep/.van-index-bar {
     .van-hairline--bottom::after {
       display: none;

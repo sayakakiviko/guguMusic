@@ -6,7 +6,6 @@
     <van-pull-refresh v-model="isLoading" @refresh="onRefresh">
       <van-swipe
         v-if="bannerList.length"
-        class="swipe"
         :autoplay="3000"
         indicator-color="#ffcd32"
       >

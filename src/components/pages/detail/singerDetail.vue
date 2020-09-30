@@ -2,7 +2,7 @@
 <!--歌手详情页-->
 
 <template>
-  <div class="singer-detail">
+  <div class="singer-detail" :class="{ pt60: $store.state.miniMode }">
     <van-icon name="arrow-left" size="0.4rem" v-back />
     <div class="singer-img" :class="{ sticky: isSticky }">
       <div>
