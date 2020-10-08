@@ -3,6 +3,20 @@
 import Vue from 'vue';
 
 /**
+ * 将歌曲列表打乱成随机排序
+ * @arr {array} 歌曲列表
+ */
+Vue.prototype.$shuffle = function(arr) {
+  let list = arr.slice();
+  for (let i = 0, length = list.length; i < length; i++) {
+    let random = Math.floor(Math.random() * (i - 0 + 1) + 0),
+      song = list[i];
+    list[i] = list[random];
+    list[random] = song;
+  }
+  return list;
+};
+/**
  * toast
  * @content {string} 内容
  * @type {number} 类型[1:success,2:warning,3:error]

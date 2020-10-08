@@ -9,6 +9,7 @@ import {
   Button,
   Cell,
   CellGroup,
+  Circle,
   Dialog,
   Divider,
   IndexBar,
@@ -20,6 +21,7 @@ import {
   Popup,
   Swipe,
   SwipeItem,
+  Slider,
   Tab,
   Tabs,
   Toast
@@ -27,6 +29,7 @@ import {
 Vue.use(Button);
 Vue.use(Cell);
 Vue.use(CellGroup);
+Vue.use(Circle);
 Vue.use(Dialog);
 Vue.use(Divider);
 Vue.use(IndexBar);
@@ -38,6 +41,7 @@ Vue.use(PullRefresh);
 Vue.use(Popup);
 Vue.use(Swipe);
 Vue.use(SwipeItem);
+Vue.use(Slider);
 Vue.use(Tab);
 Vue.use(Tabs);
 Vue.use(Toast);

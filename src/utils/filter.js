@@ -2,6 +2,20 @@
 
 import Vue from 'vue';
 /* ---- 过滤器 ----*/
+
+/**
+ * 将播放时长时间戳转为分:秒格式
+ * @time {number} 时间戳，秒
+ */
+Vue.filter('formatSongTime', function(time) {
+  time = time | 0; //|0意为向下取整，想当Math.floor
+  let m = (time / 60) | 0,
+    s = time % 60;
+  m < 10 && (m = '0' + m);
+  s < 10 && (s = '0' + s);
+  return `${m}:${s}`;
+});
+
 /**
  * 文件大小字节转单位显示
  * @timeStamp {number} 字节大小

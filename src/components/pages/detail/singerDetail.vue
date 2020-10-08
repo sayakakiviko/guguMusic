@@ -2,7 +2,11 @@
 <!--歌手详情页-->
 
 <template>
-  <div class="singer-detail" :class="{ pt60: $store.state.miniMode }">
+  <div
+    ref="singerDetail"
+    class="singer-detail"
+    :class="{ pt60: $store.state.miniMode }"
+  >
     <van-icon name="arrow-left" size="0.4rem" v-back />
     <div class="singer-img" :class="{ sticky: isSticky }">
       <div>
@@ -28,8 +32,8 @@
             class="cell"
             v-for="(item, index) in songList"
             :key="item.songId"
-            v-show="item.songName"
-            @click="selectSong(item, index)"
+            v-show="item.listenUrl"
+            @click="selectSong(index)"
           >
             <p class="no-wrap">{{ item.songName }}</p>
             <p class="no-wrap name">
@@ -63,12 +67,11 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex';
+import { mapState, mapMutations, mapActions } from 'vuex';
 export default {
   data() {
     return {
       active: 0, //tab激活项
-      tabScroll: [0, 0], //
       loading: false, //列表是否正在加载
       finished: false, //列表数据否全部加载完
       isSticky: false, //滑动一定距离后背景图是否固定
@@ -93,16 +96,18 @@ export default {
         parseFloat(document.documentElement.style.fontSize)) /
       100; //计算应该空出的高度
 
-    this.getDetail();
-    this.getSong(0);
+    this.getSingerDetail();
+    this.getSongList(0);
   },
   destroyed() {
     window.removeEventListener('scroll', this.getScrollTop); //解绑监听
   },
+  computed: mapState(['playList', 'modeIndex', 'songInfo']),
   methods: {
+    ...mapMutations(['SET_PLAYLIST', 'SET_SONGLIST', 'SET_SONGINFO']),
     ...mapActions(['selectPlay']),
     /** 获取歌手详情 */
-    getDetail() {
+    getSingerDetail() {
       this.$api['singer/getSingerDetail']({ artistId: this.singerId }).then(
         res => {
           this.singerDetail = res;
@@ -110,18 +115,41 @@ export default {
       );
     },
     /**
-     * 获取歌手作品
+     * 获取歌手作品列表
      * @pageNum {number} 页码
      * */
-    getSong(pageNum) {
+    getSongList(pageNum) {
       this.$api['singer/getSongList']({
-        artistId: this.singerId,
+        artistId: this.singerId, //歌手id
         pageNo: pageNum,
         pageSize: 20
       }).then(res => {
-        if (res.results.length) {
-          res.results.length < 20 && (this.finished = true); //判断首次加载歌曲数量是否满足允许再次请求
-          this.songList.push(...res.results);
+        let tempList = res.results;
+        if (tempList.length) {
+          tempList.length < 20 && (this.finished = true); //判断首次加载歌曲数量是否满足允许再次请求
+
+          tempList.forEach(item => {
+            item.listenUrl && this.songList.push(item); //过滤掉不能播放的歌曲
+          });
+          this.SET_PLAYLIST(tempList);
+
+          //列表更新后再判断新列表是否满足一页
+          // this.$nextTick(() => {
+          //   this.$refs.singerDetail.scrollHeight <= window.innerHeight &&
+          //     this.getSongList(++this.pageNum);
+          // });
+
+          /*let list = JSON.parse(JSON.stringify(this.songList)); //需要深拷贝方式给vuex的播放列表赋值
+          this.SET_SONGLIST(list);
+
+          if (this.modeIndex === 2) {
+            //随机播放
+            let arr = JSON.parse(JSON.stringify(this.playList)), //拿取原随机的歌曲列表
+              shuffle = this.$shuffle(res.results); //新获取的列表进行随机排序
+            this.SET_PLAYLIST(arr.concat(shuffle));
+          } else {
+            this.SET_PLAYLIST(list);
+          }*/
         } else {
           this.finished = true;
         }
@@ -147,25 +175,20 @@ export default {
         page.pageHeight - page.clientHeight - 50 <= Y &&
         time - this.nowTime > 200
       ) {
-        this.getSong(++this.pageNum);
+        this.getSongList(++this.pageNum);
         this.nowTime = time;
       }
     },
-    /** tab切换 */
-    changeTab() {
-      this.$set(this.tabScroll, this.active, window.pageYOffset);
-    },
     /**
      * 点击播放歌曲
-     * @item {object} 歌曲数据对象
      * @index {number} 歌曲在列表的下标
      */
-    selectSong(item, index) {
-      // console.log(item);
-      // console.log(index);
-      // this.SET_FULLSCREEN(true);
-      // this.SET_PLAYLIST(this.songList);
-      this.selectPlay({ list: this.songList, index });
+    selectSong(index) {
+      //播放歌曲
+      this.selectPlay({
+        list: JSON.parse(JSON.stringify(this.songList)),
+        index
+      });
     }
   }
 };
@@ -224,9 +247,6 @@ export default {
   }
   .song-list {
     padding: 0.3rem 0;
-    //transform: translateY(-3rem);
-    /*transform: translateY(0);*/
-    /*transition-duration: 0.3s;*/
     &.sticky {
       padding-top: 4.8rem;
     }
