@@ -122,11 +122,11 @@ export default {
       this.$api['singer/getSongList']({
         artistId: this.singerId, //歌手id
         pageNo: pageNum,
-        pageSize: 20
+        pageSize: 50
       }).then(res => {
         let tempList = res.results;
         if (tempList.length) {
-          tempList.length < 20 && (this.finished = true); //判断首次加载歌曲数量是否满足允许再次请求
+          tempList.length < 50 && (this.finished = true); //判断首次加载歌曲数量是否满足允许再次请求
 
           tempList.forEach(item => {
             item.listenUrl && this.songList.push(item); //过滤掉不能播放的歌曲
@@ -134,10 +134,10 @@ export default {
           this.SET_PLAYLIST(tempList);
 
           //列表更新后再判断新列表是否满足一页
-          // this.$nextTick(() => {
-          //   this.$refs.singerDetail.scrollHeight <= window.innerHeight &&
-          //     this.getSongList(++this.pageNum);
-          // });
+          this.$nextTick(() => {
+            this.$refs.singerDetail.scrollHeight <= window.innerHeight &&
+              this.getSongList(++this.pageNum);
+          });
 
           /*let list = JSON.parse(JSON.stringify(this.songList)); //需要深拷贝方式给vuex的播放列表赋值
           this.SET_SONGLIST(list);
