@@ -13,16 +13,17 @@
         <!--顶部-->
         <div class="top">
           <van-icon name="arrow-down" size="0.4rem" @click="closePlayer" />
-          <h2
-            ref="songName"
-            class="song-name van-ellipsis"
-            @click="showTitle($event, songInfo.songName)"
-          >
-            {{ songInfo.songName }}
-          </h2>
+          <div class="song-name">
+            <h2 ref="songName">
+              <span>{{ songInfo.songName }}</span>
+              <span style="margin: 0 40px" v-if="songState.longName">{{
+                songInfo.songName
+              }}</span>
+            </h2>
+          </div>
           <h3
             class="author van-ellipsis"
-            @click="showTitle($event, songInfo.singerName)"
+            @click="showSinger($event, songInfo.singerName)"
           >
             <!--歌手-->
             <span v-for="(item, i) in songInfo.singerName" :key="i"
@@ -280,6 +281,7 @@ export default {
         playMode: ['order', 'loop', 'random'], //播放模式
         miniShow: false, //是否展示迷你播放器
         lyricShow: false, //是否展示歌词页
+        longName: false, //是否是长歌名
         isDrag: false, //是否正在拖动进度条
         like: false, //是否喜欢歌曲
         index: 0 //歌曲位于歌曲列表的下标
@@ -320,7 +322,9 @@ export default {
 
         this.getLyric(this.songInfo.copyrightId); //获取当前歌曲歌词
         this.$refs.audio.play();
-        !this.fullScreen && this.showSongTitle(); //切歌后处于迷你模式需要重新设计迷你标题运动动画
+        this.$refs.songName.className = ''; //每次切歌需重置歌名class
+        this.songState.longName = false; //隐藏长歌名
+        this.fullScreen ? this.showSongName() : this.showSongTitle(); //切歌后处于迷你模式需要重新设计迷你标题运动动画
       });
     },
     //是否正在播放歌曲
@@ -400,6 +404,8 @@ export default {
     showPlayer() {
       this.SET_FULLSCREEN(true);
       this.SET_MINIMODE(false);
+
+      this.$nextTick(() => this.showSongName());
     },
     /** 关闭播放页 */
     closePlayer() {
@@ -427,15 +433,13 @@ export default {
       this.lyricLine = lineNum; //设置歌词当前行
     },
     /**
-     * 歌名/歌手 名称过长时点击显示完整名称
+     * 歌手名过长时点击显示完整名称
      * @e {object} event对象
-     * @name {string/array} 歌名为字符串，歌手为数组
+     * @name {array} 歌手数组
      * */
-    showTitle(e, name) {
+    showSinger(e, name) {
       //若文字溢出
-      if (e.target.scrollWidth - e.target.clientWidth > 0) {
-        typeof name === 'string' ? Toast(name) : Toast(...name);
-      }
+      e.target.scrollWidth - e.target.clientWidth > 0 && Toast(...name);
     },
     /** 点击更多 */
     clickMore() {},
@@ -607,7 +611,28 @@ export default {
         scale
       };
     },
-    /** 迷你模式歌名标题过长显示的规则 */
+    /** 全屏模式歌名标题过长时显示的规则 */
+    showSongName() {
+      let name = this.$refs.songName, //歌名
+        width = name.children[0].clientWidth, //标题实际宽
+        diff = width - name.clientWidth, //实际宽-容器宽
+        style = document.styleSheets[0]; //获取页面使用的样式列表
+
+      //如果标题过长且没有动画效果
+      if (diff > 0 && !name.classList.contains('roll-name')) {
+        //设置动画，width加的40为外边距
+        style.cssRules[0].name === 'showSongName' && style.deleteRule(0); //下标0被mini的暂用，所以用1
+        style.insertRule(
+          `@keyframes showSongName {to {transform: translateX(-${width +
+            40}px)}}`
+        );
+        console.log(style);
+        //执行动画
+        this.songState.longName = true;
+        name.className = 'roll-name';
+      }
+    },
+    /** 迷你模式歌名标题过长时显示的规则 */
     showSongTitle() {
       let title = this.$refs.miniTitle[this.currentIndex], //标题元素
         width = title.clientWidth, //页标题面显示宽
@@ -617,10 +642,11 @@ export default {
       //如果标题过长且没有动画效果
       if (diff > 0 && !title.classList.contains('title-name')) {
         let time = Math.max(Math.ceil((diff / width) * 8), 4); //动画运行时长：宽度差值/页标题面显示宽*8，且向上取整，但运行时间最少为4s（8为差值刚好为100%时的运行时长）
-        style.cssRules[0].name === 'miniTitleName' && style.deleteRule(0); //清除之前写入的miniTitleName动画规则
+        style.cssRules[1].name === 'miniTitleName' && style.deleteRule(1); //清除之前写入的miniTitleName动画规则
         //插入新的动画规则
         style.insertRule(
-          `@keyframes miniTitleName {to {transform: translateX(-${diff}px)}}`
+          `@keyframes miniTitleName {to {transform: translateX(-${diff}px)}}`,
+          1
         );
         title.className = 'title-name';
         title.style.animation = `miniTitleName ${time}s 2s ease-in-out infinite alternate`;
@@ -719,10 +745,17 @@ export default {
       text-align: center;
       color: #fff;
       .song-name {
+        overflow: hidden;
         width: 70%;
         margin: auto;
-        font-size: 18px;
-        line-height: 40px;
+        h2 {
+          white-space: nowrap;
+          font-size: 18px;
+          line-height: 40px;
+          span {
+            display: inline-block;
+          }
+        }
       }
       .author {
         width: 70%;
@@ -964,5 +997,9 @@ export default {
   to {
     transform: rotate(360deg);
   }
+}
+
+.roll-name {
+  animation: 8s 2s showSongName linear infinite normal;
 }
 </style>
