@@ -137,7 +137,7 @@
                 name="icon-next"
               ></icon-svg
             ></i>
-            <i @click="isShowList = true"
+            <i @click="showSongList"
               ><icon-svg class="icon-svg" name="icon-playlist"></icon-svg
             ></i>
           </div>
@@ -193,7 +193,7 @@
           :name="(playing && 'icon-pause') || 'icon-play'"
         ></icon-svg
       ></i>
-      <i @click.stop="isShowList = true"
+      <i @click.stop="showSongList"
         ><icon-svg class="icon-svg" name="icon-playlist"></icon-svg
       ></i>
     </div>
@@ -257,7 +257,6 @@
 </template>
 
 <script>
-// import BScroll from 'better-scroll';
 import { Toast } from 'vant';
 import animations from 'create-keyframe-animation';
 import lyric from 'lyric-parser';
@@ -290,16 +289,6 @@ export default {
       rate: 0 //进度条百分比
     };
   },
-  mounted() {
-    // this.$nextTick(() => {
-    //   new BScroll(this.$refs.songList, {
-    //     tap: true,
-    //     click: true,
-    //     mouseWheel: true
-    //   });
-    // });
-    // this.getSong();
-  },
   computed: mapState([
     'songInfo',
     'playing',
@@ -307,7 +296,8 @@ export default {
     'songList',
     'playList',
     'fullScreen',
-    'currentIndex'
+    'currentIndex',
+    'songIndex'
   ]),
   watch: {
     //监听当前歌曲
@@ -325,6 +315,7 @@ export default {
         this.$refs.songName.className = ''; //每次切歌需重置歌名class
         this.songState.longName = false; //隐藏长歌名
         this.fullScreen ? this.showSongName() : this.showSongTitle(); //切歌后处于迷你模式需要重新设计迷你标题运动动画
+        this.$refs.lyric.scrollTop = 0; //每次切歌后歌词滚动top重置
       });
     },
     //是否正在播放歌曲
@@ -358,7 +349,8 @@ export default {
       'SET_PLAYING',
       'SET_SONGLIST',
       'SET_PLAYLIST',
-      'SET_CURRENTINDEX'
+      'SET_CURRENTINDEX',
+      'SET_SONGINDEX'
     ]),
     ...mapActions(['selectPlay', 'deleteSong', 'clearList']),
     /** 音频允许播放时会执行该方法，报错时也要执行，否则会阻塞流程 */
@@ -382,6 +374,7 @@ export default {
       this.$refs.audio.currentTime = 0;
       this.$refs.audio.play();
       this.lyric && this.lyric.seek(0);
+      this.$refs.lyric.scrollTop = 0; //歌词滚动top重置
     },
     /**
      * 拖动进度条
@@ -415,17 +408,25 @@ export default {
       this.$nextTick(() => this.showSongTitle());
     },
     /**
-     * 处理歌词，让当前歌词始终处于页面中央
+     * 处理歌词，滚动歌词，让当前歌词始终处于页面中央
      * @lineNum {number} 当前歌词所在行
      */
     handleLyric({ lineNum }) {
-      //每次歌词换行时，若有滚动到下方，则将歌词平滑的滚动到顶部
+      //每次歌词换行时，平滑滚动到当前歌词
       const scrollToTop = () => {
-        let top = this.$refs.lyric.scrollTop,
-          num = lineNum * 38; //当前歌词距离，38为行高
-        if (top > num + 10 || top < num - 10) {
+        let el = this.$refs.lyric,
+          top = el.scrollTop,
+          num = lineNum * 36; //当前歌词距离，36为行高
+
+        if (top >= el.scrollHeight - el.clientHeight) return; //滑动到底部则不再运行动画
+
+        //滚动距离超过了一行
+        if (top < num - 36) {
           window.requestAnimationFrame(scrollToTop);
-          this.$refs.lyric.scrollTo(0, num - 38 / 8);
+          el.scrollTop = top + ((top < num - 36 * 3 && 24) || 3); //滚动距离超过三行时，提升滚动速度，每帧24
+        } else if (top > num + 36) {
+          window.requestAnimationFrame(scrollToTop);
+          el.scrollTop = top - ((top > num + 36 * 3 && 24) || 3);
         }
       };
       scrollToTop();
@@ -479,6 +480,7 @@ export default {
           index === this.playList.length && (index = 0); //最后一首切到第一首
         }
         this.SET_CURRENTINDEX(index);
+        this.SET_SONGINDEX(this.findIndex(this.songList));
         this.lyricLine = 0; //歌词马上到第一行
         !this.playing && this.togglePlay(); //暂停时切歌情况
       }
@@ -523,6 +525,16 @@ export default {
           this.SET_SONGINFO('');
           this.lyricLine = 0;
         });
+    },
+    /** 显示歌曲列表,并让当前歌曲位于列表列表中间 */
+    showSongList() {
+      this.isShowList = true;
+      this.$nextTick(() => {
+        let list = this.$refs.songList,
+          index = this.songIndex;
+
+        list.scrollTop = index > 4 ? index * 40 - list.clientHeight / 2 : 0; //播放歌曲下标大于4时，才设置滚动距离
+      });
     },
     /**
      * 播放歌曲列表选中的歌曲
@@ -626,7 +638,6 @@ export default {
           `@keyframes showSongName {to {transform: translateX(-${width +
             40}px)}}`
         );
-        console.log(style);
         //执行动画
         this.songState.longName = true;
         name.className = 'roll-name';
@@ -673,9 +684,7 @@ export default {
   .van-popup {
     box-sizing: border-box;
     padding-top: 20px;
-    background-color: #333;
     font-size: 14px;
-    color: #fff;
     .icon-svg {
       width: 30px;
       height: 30px;
@@ -708,9 +717,6 @@ export default {
         align-items: center;
         padding-left: 22px;
         line-height: 40px;
-        &.active {
-          color: #ffcd32;
-        }
         .icon-svg {
           position: absolute;
           left: 0;
@@ -739,11 +745,9 @@ export default {
     z-index: 10;
     width: 100%;
     height: 100%;
-    background-color: #222;
     transition: top 0.4s;
     .top {
       text-align: center;
-      color: #fff;
       .song-name {
         overflow: hidden;
         width: 70%;
@@ -771,7 +775,6 @@ export default {
       bottom: 170px;
       text-align: center;
       font-size: 14px;
-      color: #fff;
       .cd {
         opacity: 0;
         position: absolute;
@@ -788,7 +791,6 @@ export default {
         width: 5.8rem;
         height: 5.8rem;
         margin: auto;
-        border: 10px solid hsla(0, 0%, 100%, 0.1);
         border-radius: 50%;
         img {
           position: relative;
@@ -802,7 +804,6 @@ export default {
         position: relative;
         margin-top: 18px;
         line-height: 24px;
-        color: #666;
         &.cd-lyric {
           overflow: hidden;
           height: 72px;
@@ -815,30 +816,18 @@ export default {
         &.warp {
           overflow: scroll;
           opacity: 0;
+          //position: static;
           height: 90%;
-          line-height: 38px;
+          line-height: 36px;
           transition: opacity 0.25s;
-          &::-webkit-scrollbar {
-            display: none;
-          }
           //&:before {
           //  content: '';
           //  position: absolute;
-          //  top: 0;
+          //  top: 18px;
           //  left: 0;
           //  z-index: 2;
           //  width: 100%;
-          //  height: 100%;
-          //  background-image: linear-gradient(
-          //      180deg,
-          //      rgba(34, 34, 34, 0.9),
-          //      rgba(34, 34, 34, 0.4)
-          //    ),
-          //    linear-gradient(
-          //      0deg,
-          //      rgba(34, 34, 34, 0.9),
-          //      rgba(34, 34, 34, 0.4)
-          //    );
+          //  height: 90%;
           //  background-size: 100% 110px;
           //  background-repeat: no-repeat;
           //  background-position: top, bottom;
@@ -849,14 +838,9 @@ export default {
             opacity: 1;
           }
           .roll {
-            //position: relative;
-            //top: 45%;
             padding: 45% 0.3rem;
             transition: top 0.3s;
           }
-        }
-        .current {
-          color: #ffcd32;
         }
       }
     }
@@ -872,31 +856,22 @@ export default {
         .icon-svg {
           width: 30px;
           height: 30px;
-          &.icon-svg__icon-like-fill {
-            color: #d93f30;
-          }
         }
       }
       .progress-warp {
         display: flex;
         width: 80%;
         margin: 25px auto;
-        color: #fff;
         .progress {
           flex: 1;
           margin: auto;
           /deep/.van-slider {
             background-color: rgba(0, 0, 0, 0.3);
             border-radius: 10px;
-            .van-slider__bar {
-              background-color: #ffcd32;
-            }
             .van-slider__button {
               box-sizing: border-box;
               width: 16px;
               height: 16px;
-              background-color: #ffcd32;
-              border: 3px solid #fff;
               border-radius: 50%;
             }
           }
@@ -939,7 +914,6 @@ export default {
     align-items: center;
     width: 100%;
     height: 40px;
-    background-color: #333;
     transition: bottom 0.4s;
     &.show {
       opacity: 1;
@@ -953,9 +927,6 @@ export default {
         position: absolute;
         top: -17px;
         left: 17px;
-      }
-      /deep/.van-circle__layer {
-        stroke: #ffcd32 !important;
       }
       img {
         position: relative;
@@ -973,14 +944,12 @@ export default {
       line-height: 40px;
       p {
         font-size: 14px;
-        color: #fff;
       }
     }
     .icon-svg {
       width: 24px;
       height: 24px;
       padding: 0 10px;
-      color: #998032;
     }
   }
 }

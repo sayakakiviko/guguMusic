@@ -2,94 +2,176 @@
 @themeColor: #ffcd32;
 @fontColor: #999;
 
-#app{
+#app {
   min-height: 100%;
-  /*默认主题*/
-  background-color: #222;
+  /***默认主题***/
+  background-color: @themeBg;
+
   .header-bar {
     background-color: @themeBg;
-    .title .tit,.user{
+    .title .tit, .user {
       color: @themeColor;
     }
   }
 
-  .home{
-    h3{
+  //播放页
+  .player {
+    .van-popup {
+      background-color: #333;
+      color: #fff;
+      .song-list li.active{
+        color: @themeColor;
+      }
+    }
+    .normal-player{
+      background-color: @themeBg;
+      .top{
+        color: #fff;
+      }
+      .main{
+        color: #fff;
+        .disc{
+          border: 10px solid #393939;
+        }
+        .lyric{
+          color: #666;
+          &.warp:before{
+            background-image: linear-gradient(
+                    180deg,
+                    rgba(34, 34, 34, 0.9),
+                    rgba(34, 34, 34, 0.4)
+            ),
+            linear-gradient(
+                    0deg,
+                    rgba(34, 34, 34, 0.9),
+                    rgba(34, 34, 34, 0.4)
+            );
+          }
+          .current {
+            color: @themeColor;
+          }
+        }
+      }
+      .bottom{
+        .option .icon-svg.icon-svg__icon-like-fill {
+          color: #d93f30;
+        }
+        .progress-warp{
+          color: #fff;
+          .van-slider__bar {
+            background-color: @themeColor;
+          }
+          .van-slider__button{
+            background-color: @themeColor;
+            border: 3px solid #fff;
+          }
+        }
+      }
+    }
+    .mini-player{
+      background-color: #333;
+      .mini-disc .van-circle__layer {
+        stroke: @themeColor !important;
+      }
+      .text p{
+        color: #fff;
+      }
+      .icon-svg{
+        color: #998032;
+      }
+    }
+  }
+
+  //首页
+  .home {
+    h3 {
       color: @themeColor;
     }
+
     .con {
       color: #fff;
-      .name{
+      .name {
         color: #888;
       }
     }
   }
 
-  .singer{
+  //歌手列表页
+  .singer {
     .van-index-anchor {
       background-color: #333;
       color: @fontColor;
-      &.van-index-anchor--sticky{
+      &.van-index-anchor--sticky {
         color: @themeColor !important;
       }
     }
-    .van-index-bar__sidebar{
+    .van-index-bar__sidebar {
       background-color: rgba(24, 24, 24, 0.5);
       color: @fontColor;
-      .van-index-bar__index--active{
+      .van-index-bar__index--active {
         color: @themeColor !important;
       }
     }
-    .cell p{
+
+    .cell p {
       color: @fontColor;
     }
   }
 
-  .singer-detail{
+  //歌手详情页
+  .singer-detail {
     background-color: @themeBg;
-    .singer-img{
+    .singer-img {
       color: #fff;
     }
-    .song-list{
+
+    .song-list {
       background-color: @themeBg;
-      .cell p{
+      .cell p {
         color: #b9b9b9;
-        &.name{
+        &.name {
           color: #666;
         }
       }
     }
-    .info{
+
+    .info {
       color: #b9b9b9;
     }
   }
 
-  .van-tabs__nav--line.van-tabs__nav{
+  .van-tabs__nav--line.van-tabs__nav {
     background-color: @themeBg;
     color: @themeColor;
   }
-  .van-tabs__wrap{
-    .van-tab{
+
+  .van-tabs__wrap {
+    .van-tab {
       color: @fontColor;
-      &.van-tab--active{
+
+      &.van-tab--active {
         color: @themeColor;
       }
     }
-    .van-tabs__line{
+
+    .van-tabs__line {
       background-color: @themeColor;
     }
   }
-  .van-icon{
+
+  .van-icon {
     color: @themeColor;
   }
 
-  /*亮色主题*/
-  &.light{
+  /***亮色主题***/
+  &.light {
     background-color: #fff;
+
     .header-bar {
       background-color: #fff;
-      .title .tit,.user{
-        color:#EE0A24;
+
+      .title .tit, .user {
+        color: #EE0A24;
       }
     }
   }

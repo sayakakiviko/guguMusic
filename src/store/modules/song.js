@@ -9,7 +9,8 @@ export default {
     playList: [], //播放列表，实际播放顺序的列表，该列表随机模式时排序会变
     songList: [], //歌曲列表，即mini模式的歌曲列表，该列表排序不变
     modeIndex: 0, //播放模式的下标。0顺序播放、1单曲循环、2随机播放
-    currentIndex: -1 //当前播放歌曲位于列表的位置
+    currentIndex: -1, //当前播放歌曲位于播放列表的位置
+    songIndex: -1 //当前播放歌曲位于歌曲列表的位置
   },
   mutations: {
     SET_SINGER(state, singer) {
@@ -45,10 +46,15 @@ export default {
     SET_MODEINDEX(state, modeIndex) {
       state.modeIndex = modeIndex;
     },
-    //当前播放歌曲位于列表的下标
+    //当前播放歌曲位于播放列表的下标
     SET_CURRENTINDEX(state, currentIndex) {
       state.currentIndex = currentIndex;
       state.songInfo = state.playList[currentIndex]; //获取到是列表里的哪首歌
+    },
+    //当前播放歌曲位于歌曲列表的下标
+    SET_SONGINDEX(state, songIndex) {
+      state.songIndex = songIndex;
+      // state.songInfo = state.playList[songIndex]; //获取到是列表里的哪首歌
     }
   },
   actions: {
@@ -58,15 +64,18 @@ export default {
      * @index {number} 歌曲位于列表的下标
      * */
     selectPlay({ commit, state }, { list, index }) {
+      let songIndex = -1;
       commit('SET_SONGLIST', list); //歌曲列表
       if (state.modeIndex === 2) {
         //随机模式下点击列表播放歌曲
         commit('SET_PLAYLIST', state.playList); //播放列表
-        index = findIndex(state.playList, list[index]);
+        songIndex = findIndex(state.songList, list[index]); //获取该歌曲于歌曲列表里的位置
+        index = findIndex(state.playList, list[index]); //播放列表里的位置
       } else {
         commit('SET_PLAYLIST', list); //播放列表
       }
-      commit('SET_CURRENTINDEX', index); //第几首歌
+      commit('SET_SONGINDEX', songIndex > -1 ? songIndex : index); //位于歌曲列表第几首歌
+      commit('SET_CURRENTINDEX', index); //位于播放列表第几首歌
       !state.miniMode && commit('SET_FULLSCREEN', true); //非mini模式才打开播放器
       commit('SET_PLAYING', true); //是否正在播放歌曲
     },
