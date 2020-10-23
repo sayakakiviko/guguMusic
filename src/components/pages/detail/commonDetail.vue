@@ -9,13 +9,52 @@
   >
     <van-icon name="arrow-left" size="0.4rem" v-back />
     <div class="singer-img" :class="{ sticky: isSticky }">
-      <div>
+      <div @click="showSingerDetail">
         <img :src="avatar" />
         <p>{{ singerDetail.artistName }}</p>
       </div>
     </div>
+    <!--歌曲列表-->
+    <div class="song-list" :class="{ sticky: isSticky }" v-if="songList.length">
+      <div
+        class="cell"
+        v-for="(item, index) in songList"
+        :key="item.songId"
+        v-show="item.listenUrl"
+        @click="selectSong(index)"
+      >
+        <p class="no-wrap">{{ item.songName }}</p>
+        <p class="no-wrap name">
+          <span v-for="(name, index) in item.singerName" :key="index">{{
+            name
+          }}</span>
+        </p>
+      </div>
+      <van-divider
+        v-if="finished"
+        :style="{
+          margin: 'auto',
+          width: '80%',
+          borderColor: '#666',
+          color: '#666'
+        }"
+        >已无更多</van-divider
+      >
+    </div>
+    <van-loading v-else type="spinner" vertical style="margin-top: 1.5rem;"
+      >加载中...</van-loading
+    >
+
+    <!--歌手资料-->
+    <!--      <div :style="{ backgroundImage: `url(${avatar})` }"></div>-->
+    <div class="info" @touchmove.prevent>
+      <img :src="avatar" />
+      <h3>{{ singerDetail.artistName }}</h3>
+      <p @touchmove.stop>{{ singerDetail.intro }}</p>
+      <van-icon name="cross" size="20" color="#666" />
+    </div>
     <!--tab标签-->
-    <van-tabs
+    <!--<van-tabs
       v-model="active"
       :class="{ sticky: isSticky }"
       line-height="1px"
@@ -62,7 +101,7 @@
           {{ singerDetail.intro }}
         </p>
       </van-tab>
-    </van-tabs>
+    </van-tabs>-->
   </div>
 </template>
 
@@ -96,7 +135,6 @@ export default {
     };
   },
   mounted() {
-    // this.singerId = this.$route.query.artistId;
     window.addEventListener('scroll', this.getScrollTop); //监听滚动事件
     this.page.topHigh =
       (this.page.topHigh *
@@ -144,18 +182,6 @@ export default {
             this.$refs.singerDetail.scrollHeight <= window.innerHeight &&
               this.getSongList(++this.pageNum);
           });
-
-          /*let list = JSON.parse(JSON.stringify(this.songList)); //需要深拷贝方式给vuex的播放列表赋值
-          this.SET_SONGLIST(list);
-
-          if (this.modeIndex === 2) {
-            //随机播放
-            let arr = JSON.parse(JSON.stringify(this.playList)), //拿取原随机的歌曲列表
-              shuffle = this.$shuffle(res.results); //新获取的列表进行随机排序
-            this.SET_PLAYLIST(arr.concat(shuffle));
-          } else {
-            this.SET_PLAYLIST(list);
-          }*/
         } else {
           this.finished = true;
         }
@@ -185,6 +211,8 @@ export default {
         this.nowTime = time;
       }
     },
+    /** 显示歌手资料 */
+    showSingerDetail() {},
     /**
      * 点击播放歌曲
      * @index {number} 歌曲在列表的下标
@@ -232,16 +260,16 @@ export default {
       }
     }
   }
-  /deep/.sticky .van-hairline--top-bottom {
+  /*/deep/.sticky .van-hairline--top-bottom {
     position: fixed;
     top: 0.85rem;
     z-index: 1;
     width: 100%;
-  }
+  }*/
   .song-list {
     padding: 0.3rem 0;
     &.sticky {
-      padding-top: 4.8rem;
+      padding-top: 3.9rem;
     }
     .cell {
       padding: 0.15rem 0.4rem;
@@ -258,10 +286,55 @@ export default {
     }
   }
   .info {
-    padding: 0.3rem 0.4rem;
-    font-size: 0.28rem;
-    &.sticky {
-      padding-top: 4.8rem;
+    overflow: hidden;
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: 2;
+    height: 100vh;
+    background-color: #fff;
+    //background: no-repeat center/cover;
+    //filter: blur(30px);
+    //div {
+    //  position: absolute;
+    //  left: 0;
+    //  top: 0;
+    //  width: 110%;
+    //  height: 100%;
+    //  background: no-repeat center/cover;
+    //  filter: blur(30px);
+    //}
+    img {
+      display: block;
+      position: relative;
+      z-index: 1;
+      width: 1.68rem;
+      height: 1.68rem;
+      margin: 0.8rem auto 0.5rem;
+      border-radius: 50%;
+    }
+    h3 {
+      position: relative;
+      z-index: 1;
+      margin-bottom: 0.5rem;
+      text-align: center;
+      font-size: 18px;
+    }
+    p {
+      overflow-y: scroll;
+      position: relative;
+      z-index: 1;
+      width: 80%;
+      height: 60vh;
+      margin: auto;
+      font-size: 12px;
+    }
+    .van-icon {
+      display: block;
+      position: relative;
+      z-index: 1;
+      margin: 0.5rem;
+      text-align: center;
     }
   }
 }
