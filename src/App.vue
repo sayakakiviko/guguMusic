@@ -45,7 +45,7 @@ body {
   width: 100%;
   font-size: 0.16rem;
   .van-icon-arrow-left {
-    position: absolute;
+    position: fixed;
     left: 0.2rem;
     top: 0.2rem;
     z-index: 2;

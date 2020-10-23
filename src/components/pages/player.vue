@@ -257,10 +257,9 @@
 </template>
 
 <script>
-import { Toast } from 'vant';
+import { Toast, Dialog } from 'vant';
 import animations from 'create-keyframe-animation';
 import lyric from 'lyric-parser';
-import { Dialog } from 'vant';
 import { mapState, mapMutations, mapActions } from 'vuex';
 export default {
   data() {

@@ -1,5 +1,5 @@
 <!-- @format -->
-<!--歌手详情页-->
+<!--歌手详情页（排行榜用）-->
 
 <template>
   <div class="singer-detail">

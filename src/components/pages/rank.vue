@@ -4,7 +4,17 @@
 <template>
   <div class="rank">
     <!--周榜-->
-    <div class="week-rank">
+    <div
+      class="week-rank"
+      v-jump="[
+        'rankDetail',
+        {
+          id: 33400255,
+          name: '周榜',
+          img: weekData.contentId && weekData.columnData.columnPicUrl
+        }
+      ]"
+    >
       <div class="info">
         <p class="title">音乐 · 周榜>></p>
         <h3>
@@ -18,12 +28,23 @@
     <div class="main-rank">
       <h2>官方榜</h2>
       <ul v-if="rankData.length === 6">
-        <li v-for="(res, j) in rankData" :key="j">
+        <li
+          v-for="(res, j) in rankData"
+          :key="j"
+          v-jump="[
+            'rankDetail',
+            {
+              id: idsList[0][j].id,
+              name: idsList[0][j].name,
+              banner: `banner${j + 1}`
+            }
+          ]"
+        >
           <img :src="require('@/assets/images/rank/rank' + (j + 1) + '.jpg')" />
           <div class="right">
             <p v-for="(item, index) in res" :key="index">
               {{ index + 1 }}.{{ item.songData.songName }} -
-              <span v-for="(name, i) in item.songData.singerName"
+              <span v-for="(name, i) in item.songData.singerName" :key="i"
                 >{{ (i && ',') || '' }}{{ name }}</span
               >
             </p>
@@ -39,7 +60,19 @@
     <div class="special-rank rank-list">
       <h2>特色榜</h2>
       <ul>
-        <li v-for="(item, index) in specialData" :key="index">
+        <li
+          v-for="(item, index) in idsList[1]"
+          :key="index"
+          v-jump="[
+            'rankDetail',
+            {
+              id: item.id,
+              type: item.type,
+              name: item.name,
+              banner: `special${index + 1}`
+            }
+          ]"
+        >
           <img
             :src="
               require('@/assets/images/rank/special' + (index + 1) + '.jpg')
@@ -52,13 +85,30 @@
     <div class="global-rank rank-list">
       <h2>全球权威榜</h2>
       <ul>
-        <li v-for="(item, index) in globalData" :key="index">
+        <li
+          v-for="(item, index) in idsList[2]"
+          :key="index"
+          v-jump="[
+            'rankDetail',
+            {
+              id: item.id,
+              type: item.type,
+              name: item.name,
+              banner: `global${index + 1}`
+            }
+          ]"
+        >
           <img
             :src="require('@/assets/images/rank/global' + (index + 1) + '.jpg')"
           />
         </li>
       </ul>
     </div>
+
+    <!--榜单排行详情-->
+    <transition name="van-slide-right">
+      <router-view></router-view>
+    </transition>
   </div>
 </template>
 
@@ -68,7 +118,39 @@ export default {
     return {
       weekData: {}, //周榜
       rankData: [], //官方榜数据列表
-      //官方榜
+      //榜单id列表
+      idsList: [
+        //官方榜
+        [
+          { id: 23603703, name: '音乐榜' },
+          { id: 23603721, name: '影视榜' },
+          { id: 23603926, name: '华语内地榜' },
+          { id: 23603954, name: '华语港台榜' },
+          { id: 23603974, name: '欧美榜' },
+          { id: 23603982, name: '日韩榜' }
+        ],
+        //特色榜
+        [
+          { id: 23603993, type: 2002, name: '新人榜' },
+          { id: 23604008, type: 2002, name: '唱作人榜' },
+          { id: 23604023, name: '彩铃榜' },
+          { id: 23604032, name: '原创榜' },
+          { id: 23604040, name: 'KTV榜' },
+          { id: 23604058, name: '网络榜' },
+          { id: 23604500, type: 2003, name: '新专辑榜' }
+          // { id: 23604509, type: 2033, name: 'MV榜' }
+        ],
+        //全球权威榜
+        [
+          { id: 23634243, name: '苹果iTunes榜' },
+          { id: 23634252, name: '美国公告榜' },
+          { id: 23634262, name: 'hito中文榜' },
+          { id: 23634280, name: '中国top榜' },
+          { id: 23634290, name: '韩国Mnet榜' },
+          { id: 23634298, name: '英国UK榜' }
+        ]
+      ],
+      //特色榜
       specialData: [
         'newtalent',
         'singer',
@@ -84,26 +166,27 @@ export default {
     };
   },
   async created() {
-    await this.getRankData(23603695); //周榜
-    await this.getRankData(23603703); //音乐榜
-    await this.getRankData(23603721); //影视
-    await this.getRankData(23603926); //华语内地
-    await this.getRankData(23603954); //港台
-    await this.getRankData(23603974); //欧美
-    await this.getRankData(23603982); //日韩
+    await this.getRankData(23603695, 2011); //周榜
+    await this.getRankData(this.idsList[0][0].id); //音乐榜
+    await this.getRankData(this.idsList[0][1].id); //影视
+    await this.getRankData(this.idsList[0][2].id); //华语内地
+    await this.getRankData(this.idsList[0][3].id); //港台
+    await this.getRankData(this.idsList[0][4].id); //欧美
+    await this.getRankData(this.idsList[0][5].id); //日韩
   },
   methods: {
     /**
      * 获取排行榜单
-     * @id {string} 榜单id，用于获取是哪个榜单
+     * @id {number} 榜单id，用于获取是哪个榜单
+     * @type {number} 榜单类型，用于获取是哪个榜单
      */
-    async getRankData(id) {
+    async getRankData(id, type) {
       let param = {
         nid: id,
         pageNo: 0,
         pageSize: 3
       };
-      id === 23603695 && (param.type = 2011); //周榜需要加个type
+      type && (param.type = type); //若有type需要加type
 
       return new Promise((resolve, reject) => {
         this.$api['rank/getRankData'](param)
@@ -231,7 +314,10 @@ export default {
       width: 102%;
       li {
         display: inline-block;
-        margin: 0.15rem 0 0 0.15rem;
+        margin-top: 0.15rem;
+        &:nth-child(3n + 2) {
+          margin: 0.15rem 0.15rem 0;
+        }
         img {
           width: 2.2rem;
         }
