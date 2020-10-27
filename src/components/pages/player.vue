@@ -2,7 +2,7 @@
 <!--歌曲播放页面-->
 
 <template>
-  <div class="player" v-show="playList.length">
+  <div class="player" :style="{ zIndex: playerLevel }" v-show="playList.length">
     <transition name="van-slide-up" @enter="enter" @after-enter="afterEnter">
       <div
         ref="normal"
@@ -289,6 +289,7 @@ export default {
     };
   },
   computed: mapState([
+    'playerLevel',
     'songInfo',
     'playing',
     'modeIndex',
@@ -675,6 +676,7 @@ export default {
 
 <style lang="less" scoped>
 .player {
+  position: relative;
   .van-icon-arrow-down {
     position: absolute;
     left: 0.2rem;

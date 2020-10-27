@@ -1,6 +1,7 @@
 /** @format */
 export default {
   state: {
+    playerLevel: 10, //播放页层级
     singer: {}, //歌手
     songInfo: {}, //歌曲
     playing: false, //是否正在播放歌曲
@@ -15,6 +16,10 @@ export default {
   mutations: {
     SET_SINGER(state, singer) {
       state.singer = singer;
+    },
+    //设置播放页层级
+    SET_PLAYERLEVEL(state, playerLevel) {
+      state.playerLevel = playerLevel;
     },
     //添加歌词或替换歌曲对象
     SET_SONGINFO(state, songInfo) {
@@ -54,7 +59,6 @@ export default {
     //当前播放歌曲位于歌曲列表的下标
     SET_SONGINDEX(state, songIndex) {
       state.songIndex = songIndex;
-      // state.songInfo = state.playList[songIndex]; //获取到是列表里的哪首歌
     }
   },
   actions: {

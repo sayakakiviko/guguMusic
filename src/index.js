@@ -18,9 +18,11 @@ import '@/utils/filter';
 import plugin from '@/plugins';
 import router from '@/router';
 import store from '@/store';
+// import smoothScroll from '@/components/ui/smoothScroll';
 
 Vue.config.productionTip = false;
 Vue.use(plugin);
+// Vue.component(smoothScroll);
 const FastClick = require('fastclick');
 FastClick.attach(document.body);
 

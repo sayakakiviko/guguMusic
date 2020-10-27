@@ -7,11 +7,12 @@
     class="common-detail"
     :class="{ pt60: $store.state.miniMode }"
   >
+    <!--    <smoothScroll>-->
     <van-icon name="arrow-left" size="0.4rem" v-back />
     <div class="singer-img" :class="{ sticky: isSticky }">
-      <div @click="showSingerDetail">
-        <img :src="avatar" />
-        <p>{{ singerDetail.artistName }}</p>
+      <div>
+        <img :src="avatar" @click="showInfo" />
+        <p @click="backTop">{{ singerDetail.artistName }}</p>
       </div>
     </div>
     <!--歌曲列表-->
@@ -45,69 +46,27 @@
       >加载中...</van-loading
     >
 
-    <!--歌手资料-->
-    <!--      <div :style="{ backgroundImage: `url(${avatar})` }"></div>-->
-    <div class="info" @touchmove.prevent>
+    <!--歌手详情-->
+    <div
+      class="info"
+      :style="{ top: infoShow ? `${page.scrollHeight}px` : '-100vh' }"
+      @touchmove.prevent
+    >
       <img :src="avatar" />
       <h3>{{ singerDetail.artistName }}</h3>
       <p @touchmove.stop>{{ singerDetail.intro }}</p>
-      <van-icon name="cross" size="20" color="#666" />
+      <van-icon name="cross" size="20" color="#666" @click="closeInfo" />
     </div>
-    <!--tab标签-->
-    <!--<van-tabs
-      v-model="active"
-      :class="{ sticky: isSticky }"
-      line-height="1px"
-      swipeable
-      animated
-    >
-      <van-tab title="歌曲列表">
-        <div
-          class="song-list"
-          :class="{ sticky: isSticky }"
-          v-if="songList.length"
-        >
-          <div
-            class="cell"
-            v-for="(item, index) in songList"
-            :key="item.songId"
-            v-show="item.listenUrl"
-            @click="selectSong(index)"
-          >
-            <p class="no-wrap">{{ item.songName }}</p>
-            <p class="no-wrap name">
-              <span v-for="(name, index) in item.singerName" :key="index">{{
-                name
-              }}</span>
-            </p>
-          </div>
-          <van-divider
-            v-if="finished"
-            :style="{
-              margin: 'auto',
-              width: '80%',
-              borderColor: '#666',
-              color: '#666'
-            }"
-            >已无更多</van-divider
-          >
-        </div>
-        <van-loading v-else type="spinner" vertical style="margin-top: 1.5rem;"
-          >加载中...</van-loading
-        >
-      </van-tab>
-      <van-tab title="歌手详情">
-        <p class="info" :class="{ sticky: isSticky }">
-          {{ singerDetail.intro }}
-        </p>
-      </van-tab>
-    </van-tabs>-->
+    <!--    </smoothScroll>-->
   </div>
 </template>
 
 <script>
+import smoothScroll from '@/components/ui/smoothScroll';
+// import BScroll from 'better-scroll';
 import { mapMutations, mapActions } from 'vuex';
 export default {
+  // components: { smoothScroll },
   props: {
     singerId: [String, Number], //歌手id
     //歌手头像
@@ -122,9 +81,11 @@ export default {
       loading: false, //列表是否正在加载
       finished: false, //列表数据否全部加载完
       isSticky: false, //滑动一定距离后背景图是否固定
+      infoShow: false, //歌手详情显示状态
       //页面上需要获取处理的高度
       page: {
         topHigh: 275, //顶部标签栏需空出的高度，基于750px
+        scrollHeight: 0, //滚动距离
         pageHeight: 0, //页面高度
         clientHeight: document.documentElement.clientHeight //可视区高度
       },
@@ -135,6 +96,8 @@ export default {
     };
   },
   mounted() {
+    // console.log(this.page.clientHeight);
+    // console.log(document.getElementsByClassName('singer-img')[0].clientHeight);
     window.addEventListener('scroll', this.getScrollTop); //监听滚动事件
     this.page.topHigh =
       (this.page.topHigh *
@@ -143,6 +106,13 @@ export default {
 
     this.getSingerDetail();
     this.getSongList(0);
+
+    // this.$nextTick(() => {
+    //   this.scroll = new BScroll(this.$refs.scroll, {
+    //     probeType: 1,
+    //     click: true
+    //   });
+    // });
   },
   destroyed() {
     window.removeEventListener('scroll', this.getScrollTop); //解绑监听
@@ -200,6 +170,7 @@ export default {
         Y = window.pageYOffset, //滚动距离
         time = Date.now(); //获取时间戳
       this.isSticky = (Y >= page.topHigh && true) || false;
+      this.page.scrollHeight = Y;
 
       //页面滚动到底部，还有数据情况下加载数据并做节流处理
       if (
@@ -211,8 +182,29 @@ export default {
         this.nowTime = time;
       }
     },
+    /** 返回顶部 */
+    backTop() {
+      const scrollToTop = () => {
+        const c = document.documentElement.scrollTop || document.body.scrollTop;
+        if (c > 0) {
+          window.requestAnimationFrame(scrollToTop);
+          window.scrollTo(0, c - c / 8);
+        }
+      };
+      scrollToTop();
+    },
     /** 显示歌手资料 */
-    showSingerDetail() {},
+    showInfo() {
+      this.infoShow = true;
+      setTimeout(() => {
+        this.$store.commit('SET_PLAYERLEVEL', 0); //隐藏播放页
+      }, 300);
+    },
+    /** 关闭歌手资料 */
+    closeInfo() {
+      this.infoShow = false;
+      this.$store.commit('SET_PLAYERLEVEL', 10); //还原播放页
+    },
     /**
      * 点击播放歌曲
      * @index {number} 歌曲在列表的下标
@@ -267,10 +259,15 @@ export default {
     width: 100%;
   }*/
   .song-list {
+    //margin-top: 0;
     padding: 0.3rem 0;
+    //transition: margin-top 0.3s;
     &.sticky {
       padding-top: 3.9rem;
     }
+    //&.hide{
+    //  margin-top: calc(100vh - 3.6rem);
+    //}
     .cell {
       padding: 0.15rem 0.4rem;
       p {
@@ -289,10 +286,11 @@ export default {
     overflow: hidden;
     position: absolute;
     left: 0;
-    top: 0;
+    top: -100vh;
     z-index: 2;
     height: 100vh;
     background-color: #fff;
+    transition: top 0.4s;
     //background: no-repeat center/cover;
     //filter: blur(30px);
     //div {
