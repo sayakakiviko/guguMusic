@@ -4,8 +4,8 @@
     <div class="title">
       <img src="../../assets/images/logo.gif" class="logo" />
       <h1 class="tit">咕咕~</h1>
-      <div class="user" @click="changeTheme('light')">
-        <i class="iconfont icon-user"></i>
+      <div class="search" v-jump="['search']">
+        <icon-svg class="icon-svg" name="icon-search"></icon-svg>
       </div>
     </div>
     <!--tab选项卡的切换-->
@@ -13,7 +13,7 @@
       <van-tab title="首页" to="home"></van-tab>
       <van-tab title="歌手" to="singer"></van-tab>
       <van-tab title="排行" to="rank"></van-tab>
-      <van-tab title="搜索" to="search"></van-tab>
+      <van-tab title="我的" to="my"></van-tab>
     </van-tabs>
   </div>
 </template>
@@ -26,7 +26,7 @@ export default {
     };
   },
   mounted() {
-    let arr = ['home', 'singer', 'rank', 'search'];
+    let arr = ['home', 'singer', 'rank', 'my'];
     //根据路由设定tab的位置
     setTimeout(() => {
       this.tabActive = arr.findIndex(
@@ -34,11 +34,7 @@ export default {
       );
     }, 200);
   },
-  methods: {
-    changeTheme(theme) {
-      document.getElementById('app').className = theme;
-    }
-  }
+  methods: {}
 };
 </script>
 
@@ -63,22 +59,10 @@ export default {
       display: inline-block;
       font-size: 0.24rem;
     }
-    .user {
+    .search {
       position: absolute;
-      right: 0.1rem;
-      top: 0.1rem;
-      padding: 0.15rem;
-      width: 0.2rem;
-      height: 0.2rem;
-      font-size: 0.2rem;
-      .iconfont {
-        position: absolute;
-        left: 0;
-        right: 0;
-        top: 0.1rem;
-        bottom: 0;
-        margin: auto;
-      }
+      right: 0.2rem;
+      top: 0.15rem;
     }
   }
   /deep/.van-tabs--line .van-tabs__wrap {

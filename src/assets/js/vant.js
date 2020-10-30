@@ -21,6 +21,7 @@ import {
   Swipe,
   SwipeItem,
   Slider,
+  Search,
   Tab,
   Tabs
 } from 'vant';
@@ -39,5 +40,6 @@ Vue.use(Popup);
 Vue.use(Swipe);
 Vue.use(SwipeItem);
 Vue.use(Slider);
+Vue.use(Search);
 Vue.use(Tab);
 Vue.use(Tabs);

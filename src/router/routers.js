@@ -63,6 +63,14 @@ export default [
     ]
   },
   {
+    path: '/my',
+    name: 'my',
+    desc: '我的',
+    components: {
+      default: getPage('my')
+    }
+  },
+  {
     path: '/search',
     name: 'search',
     desc: '搜索',
@@ -70,12 +78,4 @@ export default [
       default: getPage('search')
     }
   }
-  // {
-  //   path: '/singerDetail',
-  //   name: 'singerDetail',
-  //   desc: '歌手详情',
-  //   components: {
-  //     default: getPage('detail/singerDetail')
-  //   }
-  // }
 ];

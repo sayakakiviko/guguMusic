@@ -1,6 +1,8 @@
 @themeBg: #222;
+@themeBgSub: #333;
 @themeColor: #ffcd32;
 @fontColor: #999;
+@fontColorSub: #fff;
 
 #app {
   min-height: 100%;
@@ -17,8 +19,8 @@
   //播放页
   .player {
     .van-popup {
-      background-color: #333;
-      color: #fff;
+      background-color: @themeBgSub;
+      color: @fontColorSub;
       .song-list li.active{
         color: @themeColor;
       }
@@ -26,10 +28,10 @@
     .normal-player{
       background-color: @themeBg;
       .top{
-        color: #fff;
+        color: @fontColorSub;
       }
       .main{
-        color: #fff;
+        color: @fontColorSub;
         .disc{
           border: 10px solid #393939;
         }
@@ -57,24 +59,24 @@
           color: #d93f30;
         }
         .progress-warp{
-          color: #fff;
+          color: @fontColorSub;
           .van-slider__bar {
             background-color: @themeColor;
           }
           .van-slider__button{
             background-color: @themeColor;
-            border: 3px solid #fff;
+            border: 3px solid @fontColorSub;
           }
         }
       }
     }
     .mini-player{
-      background-color: #333;
+      background-color: @themeBgSub;
       .mini-disc .van-circle__layer {
         stroke: @themeColor !important;
       }
       .text p{
-        color: #fff;
+        color: @fontColorSub;
       }
       .icon-svg{
         color: #998032;
@@ -89,7 +91,7 @@
     }
 
     .con {
-      color: #fff;
+      color: @fontColorSub;
       .name {
         color: #888;
       }
@@ -99,7 +101,7 @@
   //歌手列表页
   .singer {
     .van-index-anchor {
-      background-color: #333;
+      background-color: @themeBgSub;
       color: @fontColor;
       &.van-index-anchor--sticky {
         color: @themeColor !important;
@@ -122,7 +124,7 @@
   .singer-detail {
     background-color: @themeBg;
     .singer-img {
-      color: #fff;
+      color: @fontColorSub;
     }
 
     .song-list {
@@ -139,7 +141,24 @@
       color: #b9b9b9;
     }
   }
+  
+  //我的
+  .my{
+    .name{
+      color: @fontColorSub;
+    }
+    .menu {
+      background-color: @themeBgSub;
+      li{
+        color: @fontColor;
+      }
+    }
+    button{
+      color: #999;
+    }
+  }
 
+  //其他
   .van-tabs__nav--line.van-tabs__nav {
     background-color: @themeBg;
     color: @themeColor;
