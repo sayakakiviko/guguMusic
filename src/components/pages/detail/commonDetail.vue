@@ -7,12 +7,12 @@
     class="common-detail"
     :class="{ pt60: $store.state.miniMode }"
   >
-    <!--    <smoothScroll>-->
+    <!--    <smooth-scroll>-->
     <van-icon name="arrow-left" size="0.4rem" v-back />
     <div class="singer-img" :class="{ sticky: isSticky }">
       <div>
         <img :src="avatar" @click="showInfo" />
-        <p @click="backTop">{{ singerDetail.artistName }}</p>
+        <p v-backTop>{{ singerDetail.artistName || albumFlag }}</p>
       </div>
     </div>
     <!--歌曲列表-->
@@ -57,12 +57,12 @@
       <p @touchmove.stop>{{ singerDetail.intro }}</p>
       <van-icon name="cross" size="20" color="#666" @click="closeInfo" />
     </div>
-    <!--    </smoothScroll>-->
+    <!--    </smooth-scroll>-->
   </div>
 </template>
 
 <script>
-import smoothScroll from '@/components/ui/smoothScroll';
+import smoothScroll from '@/components/ui/smooth-scroll';
 // import BScroll from 'better-scroll';
 import { mapMutations, mapActions } from 'vuex';
 export default {
@@ -71,6 +71,11 @@ export default {
     singerId: [String, Number], //歌手id
     //歌手头像
     avatar: {
+      type: String,
+      default: ''
+    },
+    //是否是专辑
+    albumFlag: {
       type: String,
       default: ''
     }
@@ -106,6 +111,7 @@ export default {
 
     this.getSingerDetail();
     this.getSongList(0);
+    document.documentElement.scrollTop = 0; //进入页面时滚动距离为0
 
     // this.$nextTick(() => {
     //   this.scroll = new BScroll(this.$refs.scroll, {
@@ -129,15 +135,19 @@ export default {
       );
     },
     /**
-     * 获取歌手作品列表
+     * 获取歌手作品列表or专辑歌曲列表
      * @pageNum {number} 页码
      * */
     getSongList(pageNum) {
-      this.$api['singer/getSongList']({
-        artistId: this.singerId, //歌手id
+      let param = {
         pageNo: pageNum,
         pageSize: 50
-      }).then(res => {
+      };
+      (this.albumFlag && (param.albumId = this.singerId)) ||
+        (param.artistId = this.singerId); //专辑列表才
+      this.$api[
+        (this.albumFlag && 'rank/getAlbumSong') || 'singer/getSongList'
+      ](param).then(res => {
         let tempList = res.results;
         if (tempList.length) {
           tempList.length < 50 && (this.finished = true); //判断首次加载歌曲数量是否满足允许再次请求
@@ -181,17 +191,6 @@ export default {
         this.getSongList(++this.pageNum);
         this.nowTime = time;
       }
-    },
-    /** 返回顶部 */
-    backTop() {
-      const scrollToTop = () => {
-        const c = document.documentElement.scrollTop || document.body.scrollTop;
-        if (c > 0) {
-          window.requestAnimationFrame(scrollToTop);
-          window.scrollTo(0, c - c / 8);
-        }
-      };
-      scrollToTop();
     },
     /** 显示歌手资料 */
     showInfo() {
@@ -239,7 +238,7 @@ export default {
       top: 0;
       bottom: 0;
       margin: auto;
-      width: 1.68rem;
+      /*width: 1.68rem;*/
       height: 1.68rem;
       text-align: center;
       font-size: 0.28rem;

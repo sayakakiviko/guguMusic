@@ -3,6 +3,28 @@
 import Vue from 'vue';
 
 /**
+ * Vue 平滑地返回顶部
+ * 例子：<div v-backTop>返回</div>
+ */
+Vue.directive('backTop', {
+  bind: function(el, binding, vnode) {
+    el.handler = function(e) {
+      const scrollToTop = () => {
+        const c = document.documentElement.scrollTop;
+        if (c > 0) {
+          window.requestAnimationFrame(scrollToTop);
+          window.scrollTo(0, c - c / 8);
+        }
+      };
+      scrollToTop();
+    };
+    el.addEventListener('click', el.handler, true);
+  },
+  unbind: function(el) {
+    el.removeEventListener('click', el.handler);
+  }
+});
+/**
  * Vue 跳转指令'v-jump'，调整新页面或url，基于router.push方式
  * @param name/path 路由名或路径(必传)[eg:home或/home]
  * @param param 参数[eg:{id:123}]

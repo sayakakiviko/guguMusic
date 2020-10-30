@@ -6,6 +6,7 @@
     <commonDetail
       :singer-id="$route.query.artistId"
       :avatar="$route.query.img"
+      :albumFlag="$route.query.albumFlag"
     ></commonDetail>
   </div>
 </template>
@@ -25,6 +26,5 @@ export default {
   z-index: 10;
   width: 100%;
   min-height: 100%;
-  background-color: #222;
 }
 </style>

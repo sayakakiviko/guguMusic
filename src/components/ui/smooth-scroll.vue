@@ -5,6 +5,7 @@
     class="smooth-scroll"
     @touchstart="touchstart"
     @touchend="touchend"
+    @touchmove="touchmove"
   >
     <slot></slot>
   </div>
@@ -18,12 +19,13 @@ export default {
   mounted() {},
   methods: {
     touchstart(e) {
-      console.log(
-        document.documentElement.scrollTop || document.body.scrollTop
-      );
+      console.log(e);
       // console.log(this.$refs.smoothScroll.scrollTop);
     },
-    touchend(e) {
+    touchend(e) {},
+    touchmove(e) {
+      // if(!document.documentElement.scrollTop){
+      // }
       // console.log(e);
     }
   }
@@ -33,6 +35,6 @@ export default {
 <style lang="less" scoped>
 .smooth-scroll {
   transition: transform 1s;
-  transform: translateY(0);
+  /*transform: translateY(0);*/
 }
 </style>

@@ -161,7 +161,7 @@
         <img
           class="rotate-mini"
           :class="{ paused: !playing }"
-          :src="songInfo.picS"
+          :src="songInfo.picM"
         />
       </div>
       <div class="text" v-if="!fullScreen">

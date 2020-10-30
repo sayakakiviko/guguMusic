@@ -25,6 +25,5 @@ export default {
   z-index: 10;
   width: 100%;
   min-height: 100%;
-  background-color: #222;
 }
 </style>

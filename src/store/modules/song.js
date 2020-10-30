@@ -11,7 +11,8 @@ export default {
     songList: [], //歌曲列表，即mini模式的歌曲列表，该列表排序不变
     modeIndex: 0, //播放模式的下标。0顺序播放、1单曲循环、2随机播放
     currentIndex: -1, //当前播放歌曲位于播放列表的位置
-    songIndex: -1 //当前播放歌曲位于歌曲列表的位置
+    songIndex: -1, //当前播放歌曲位于歌曲列表的位置
+    rankScrollTop: 0 //榜单详情滚动距离
   },
   mutations: {
     SET_SINGER(state, singer) {
@@ -59,6 +60,10 @@ export default {
     //当前播放歌曲位于歌曲列表的下标
     SET_SONGINDEX(state, songIndex) {
       state.songIndex = songIndex;
+    },
+    //榜单详情滚动距离
+    SET_RANKSCROLLTOP(state, rankScrollTop) {
+      state.rankScrollTop = rankScrollTop;
     }
   },
   actions: {

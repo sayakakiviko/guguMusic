@@ -14,11 +14,16 @@
         }
       "
     >
-      <p :class="{ show: isSticky }">{{ $route.query.name }}</p>
+      <p :class="{ show: isSticky }" v-backTop>{{ $route.query.name }}</p>
     </div>
 
     <!--列表-->
-    <ul class="list" :class="{ sticky: isSticky }" v-if="dataList.length">
+    <ul
+      class="list"
+      :class="{ sticky: isSticky }"
+      v-show="listShow"
+      v-if="dataList.length"
+    >
       <li
         v-for="(item, index) in dataList"
         :key="index"
@@ -69,6 +74,7 @@ import { mapMutations, mapActions } from 'vuex';
 export default {
   data() {
     return {
+      listShow: true, //列表显示状态
       topHigh: 282, //顶部标签栏需空出的高度，基于750px
       isSticky: false, //滑动一定距离后背景图是否固定
       bannerClass: undefined, //横幅图类名
@@ -80,6 +86,7 @@ export default {
     this.getRankData(this.$route.query.id, this.$route.query.type);
   },
   mounted() {
+    document.documentElement.scrollTop = this.$store.state.rankScrollTop; //返回时设置滚动距离
     window.addEventListener('scroll', this.getScrollTop); //监听滚动事件
     this.topHigh =
       (this.topHigh * parseFloat(document.documentElement.style.fontSize)) /
@@ -88,8 +95,13 @@ export default {
   destroyed() {
     window.removeEventListener('scroll', this.getScrollTop); //解绑监听
   },
+  watch: {
+    $route(route) {
+      this.listShow = route.name !== 'rankSingerDetail'; //若处于歌手详情页，隐藏列表
+    }
+  },
   methods: {
-    ...mapMutations(['SET_PLAYLIST']),
+    ...mapMutations(['SET_PLAYLIST', 'SET_RANKSCROLLTOP']),
     ...mapActions(['selectPlay']),
     /**
      * 获取排行榜单
@@ -132,7 +144,7 @@ export default {
       this.isSticky = (Y >= this.topHigh && true) || false;
     },
     /**
-     * 点击播放歌曲
+     * 点击播放歌曲or进入歌曲列表
      * @index {number} 歌曲在列表的下标
      * @item {string} 点击的对象。若有歌名则直接播放歌曲，否则跳转链接
      */
@@ -144,9 +156,15 @@ export default {
           index
         });
       } else {
+        //进入列表
+        this.SET_RANKSCROLLTOP(document.documentElement.scrollTop); //先存入滚动高度
         this.$router.push({
           name: 'rankSingerDetail',
-          query: { artistId: item.singerId, img: item.localArtistPicM }
+          query: {
+            artistId: item.albumId || item.singerId,
+            img: item.localAlbumPicM || item.localArtistPicM,
+            albumFlag: item.albumName
+          }
         });
       }
     }
