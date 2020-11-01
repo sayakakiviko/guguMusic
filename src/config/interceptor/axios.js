@@ -62,10 +62,10 @@ export function responseSuccessFunc(response) {
     router.replace({ name: 'login' });
   } else {
     if (
-      (response.data.result || response.data.data) &&
+      (response.data.result || response.data.data || response.data) &&
       response.status === 200
     ) {
-      return response.data.result || response.data.data;
+      return response.data.result || response.data.data || response.data;
     } else if (response.status === 200) {
       // 仅有状态消息返回时
       return response.statusText;
