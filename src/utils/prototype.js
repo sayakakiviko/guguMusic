@@ -3,6 +3,26 @@
 import Vue from 'vue';
 
 /**
+ * 数组or数组对象去重
+ * @arr {Array} 需要去重的数组对象
+ * @key {String} 需要去重的数组对象依据的key
+ * */
+Vue.prototype.$removal = function(arr, key) {
+  let res = [], // 改造后输出的数组
+    temp = [], // 存放去重key的数组
+    index;
+  for (let i = 0, length = arr.length; i < length; i++) {
+    index = key ? temp.indexOf(arr[i][key]) : res.indexOf(arr[i]); // 当前数据是否存在于数组中。存在返回在数组中的下标，不存在为-1
+
+    if (index === -1) {
+      //若该数据不存在
+      temp.push(arr[i][key]);
+      res.push(arr[i]); //存入该条数据
+    }
+  }
+  return res;
+};
+/**
  * 将歌曲列表打乱成随机排序
  * @arr {array} 歌曲列表
  */

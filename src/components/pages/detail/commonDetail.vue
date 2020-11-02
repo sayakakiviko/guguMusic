@@ -143,8 +143,11 @@ export default {
         pageNo: pageNum,
         pageSize: 50
       };
+
+      //区分专辑列表和歌曲列表
       (this.albumFlag && (param.albumId = this.singerId)) ||
-        (param.artistId = this.singerId); //专辑列表才
+        (param.artistId = this.singerId);
+
       this.$api[
         (this.albumFlag && 'rank/getAlbumSong') || 'singer/getSongList'
       ](param).then(res => {

@@ -3,51 +3,89 @@
 
 <template>
   <div class="search">
-    <!--    <icon-svg class="icon-svg search" name="icon-search"></icon-svg>-->
     <van-search
       v-model="value"
       show-action
       autofocus
+      :disabled="disabled"
+      :class="{ 'search-run': searchRun }"
       shape="round"
-      background="transparent"
+      background="#222"
       placeholder="请输入搜索关键词"
+      @focus="onFocus"
       @input="onInput"
-      @search="onSearch"
+      @search="onSearch(value, 1)"
       @clear="showResult = false"
       @cancel="$router.go(-1)"
     />
     <!--搜索结果-->
     <div class="result" v-if="showResult && value">
-      <van-tabs v-model="active" line-height="1px" :offset-top="54" sticky>
+      <van-tabs
+        v-model="active"
+        line-height="1px"
+        :offset-top="54"
+        sticky
+        @rendered="rendered"
+      >
         <van-tab title="歌曲">
-          <ul>
-            <li
-              class="van-clearfix"
-              v-for="(item, index) in result"
+          <van-list
+            v-if="result.musics.length"
+            v-model="loading[active]"
+            :finished="finished[active]"
+            finished-text="没有更多了"
+            @load="onLoad"
+          >
+            <div
+              class="cell van-clearfix"
+              v-for="(item, index) in result.musics"
               :key="index"
             >
               <img :src="item.cover || require('@/assets/images/logo.gif')" />
-              <div class="music-name">
+              <div class="right-part">
                 <h4 class="van-ellipsis">{{ item.songName }}</h4>
                 <p>{{ item.singerName }}</p>
-                <i><icon-svg class="icon-svg" name="icon-more"></icon-svg></i>
+                <icon-svg class="icon-svg" name="icon-more"></icon-svg>
               </div>
-            </li>
-          </ul>
+            </div>
+          </van-list>
         </van-tab>
-        <van-tab title="歌手">内容</van-tab>
+        <van-tab title="歌手">
+          <van-list
+            v-if="result.artists.length"
+            v-model="loading[active]"
+            :finished="finished[active]"
+            finished-text="没有更多了"
+            @load="onLoad"
+          >
+            <div
+              class="singer cell van-clearfix"
+              v-for="(item, index) in result.artists"
+              :key="index"
+            >
+              <img
+                :src="item.artistPicM || require('@/assets/images/logo.gif')"
+              />
+              <div class="right-part">
+                <h4>{{ item.title }}</h4>
+                <p>歌曲数量 {{ item.songNum }}</p>
+                <p>专辑数量 {{ item.albumNum }}</p>
+                <van-icon class="icon-svg" name="arrow" />
+              </div>
+            </div>
+          </van-list>
+        </van-tab>
       </van-tabs>
     </div>
     <!--搜索关键词-->
     <div v-else>
       <!--输入后-->
-      <div class="search-key" v-if="value">
-        <p @click="onSearch">搜索"{{ value }}"</p>
+      <div class="search-key" v-if="value && !disabled">
+        <p @click="onSearch(value, 1)">搜索"{{ value }}"</p>
         <ul>
           <li
             v-for="(item, index) in keyword"
             :key="index"
-            @click="selectKeyword(item.name + '-' + item.singer)"
+            @click="clickSearch(item.name + '-' + item.singer)"
           >
             <van-icon name="search" />
             {{ item.name }}-{{ item.singer }}
@@ -67,7 +105,7 @@
             <li
               v-for="(item, index) in historyKey"
               :key="index"
-              @click="selectKeyword(item)"
+              @click="clickSearch(item)"
             >
               {{ item }}
             </li>
@@ -79,7 +117,7 @@
             <li
               v-for="(item, index) in hotKey"
               :key="index"
-              @click="selectKeyword(item.txtData.txtName)"
+              @click="clickSearch(item.txtData.txtName)"
             >
               {{ item.txtData.txtName }}
             </li>
@@ -98,11 +136,22 @@ export default {
     return {
       active: 0, //tab激活项
       value: '', //搜索内容
+      loading: [false, false], //列表是否正在加载
+      finished: [false, false], //是否全部加载完毕
+      disabled: false, //是否禁用输入框
+      searchRun: false, //搜索框是否载入动画
       showResult: false, //是否显示搜索结果列表
       historyKey: [], //搜索历史
       hotKey: [], //热门搜索关键词
       keyword: [], //输入词列表
-      result: [] //搜索结果
+      //搜索结果
+      result: {
+        musics: [], //歌曲列表
+        artists: [] //歌手列表
+      },
+      resultType: [2, 1], //搜索结果类型。1为歌手，2为歌曲，4为专辑，6为歌单
+      pageNum: 1, //页码
+      nowTime: 0 //请求的时间戳，以便节流处理
     };
   },
   created() {
@@ -110,6 +159,11 @@ export default {
     //获取本地的搜索记录
     localStorage.getItem('historyKey') &&
       (this.historyKey = JSON.parse(localStorage.getItem('historyKey')));
+  },
+  watch: {
+    $route(newVal, oldVal) {
+      this.searchRun = newVal.name !== oldVal.name; //其他页进入搜索页才有动画
+    }
   },
   methods: {
     /** 获取热门搜索 */
@@ -127,9 +181,15 @@ export default {
      * 点击关键词搜索
      * @val {string} 选中的关键词
      * */
-    selectKeyword(val) {
+    clickSearch(val) {
+      this.disabled = true; //避免出现onInput的情况；结果出现前禁止再次获取input焦点
       this.value = val;
-      this.onSearch();
+      this.onSearch(val, 1);
+    },
+    /** 获得焦点时 */
+    onFocus() {
+      this.showResult = false;
+      this.onInput(this.value);
     },
     /**
      * 获取输入内容联想词
@@ -140,22 +200,58 @@ export default {
         this.keyword = res.key;
       });
     },
-    /** 点击搜索 */
-    onSearch() {
+    /**
+     * 点击搜索
+     * @val {string} 输入的内容
+     * @page {number} 页码
+     * */
+    onSearch(val, page) {
+      let type = ['musics', 'artists']; //列表类型
       this.$api['search/getSearchResult']({
-        keyword: this.value, //搜索词
-        rows: 20, //每页显示数
-        pgc: 1, //页码
-        type: 2 //1为歌手，2为歌曲，4为专辑，6为歌单
-      }).then(res => {
-        this.result = res.musics;
-        this.showResult = true;
+        keyword: val || this.value, //搜索词
+        rows: 30, //每页显示数
+        type: this.resultType[this.active], //列表类型。1为歌手，2为歌曲，4为专辑，6为歌单
+        pgc: page //页码
+      })
+        .then(res => {
+          this.pageNum = page;
 
-        //将搜索词存入本地历史记录
-        this.historyKey.length >= 10 && this.historyKey.pop(); //最多10条搜索历史
-        this.historyKey.unshift(this.value); //往数组前添加
-        localStorage.setItem('historyKey', JSON.stringify(this.historyKey));
-      });
+          //loadMore时为push，否则直接赋值
+          (page > 1 &&
+            this.result[type[this.active]].push(...res[type[this.active]])) ||
+            (this.result[type[this.active]] = res[type[this.active]]);
+
+          this.result[type[this.active]].length >= res.pgt &&
+            (this.finished[this.active] = true); //数据全部加载完毕
+
+          //将搜索词存入本地历史记录
+          if (page === 1) {
+            this.showResult = true;
+            this.disabled = false;
+
+            this.historyKey.unshift(this.value); //往数组前添加
+            this.historyKey = this.$removal(this.historyKey); //去重
+            this.historyKey.length >= 10 && this.historyKey.pop(); //最多10条搜索历史
+            localStorage.setItem('historyKey', JSON.stringify(this.historyKey));
+          }
+        })
+        .catch(e => {
+          console.log(e);
+        });
+    },
+    /** 加载更多 */
+    onLoad() {
+      let time = Date.now();
+      //节流处理
+      if (time - this.nowTime > 200) {
+        this.onSearch(this.value, ++this.pageNum);
+        this.nowTime = time;
+      }
+      this.$set(this.loading, this.active, false);
+    },
+    /** 切换标签，仅执行一次  */
+    rendered() {
+      this.onSearch(this.value, 1);
     },
     /** 清空搜索历史 */
     deleteHistory() {
@@ -176,20 +272,35 @@ export default {
 
 <style lang="less" scoped>
 .search {
+  overflow-y: scroll;
   position: fixed;
   left: 0;
   top: 0;
+  bottom: 0;
   z-index: 10;
   width: 100%;
   min-height: 100vh;
   background-color: #222;
-  .search.icon-svg {
-    position: absolute;
-    right: 0.2rem;
-    top: 0.15rem;
+  /deep/.van-search {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    width: 100%;
+    .van-icon {
+      color: #999 !important;
+      &.van-icon-search {
+        font-size: 22px;
+      }
+    }
   }
-  /deep/.van-icon {
-    color: #999 !important;
+  .search-run {
+    transform: translateX(87%);
+    animation: searchRun 0.3s forwards;
+  }
+  @keyframes searchRun {
+    to {
+      transform: translateX(0);
+    }
   }
   /deep/.van-search__content {
     background-color: #333;
@@ -259,10 +370,10 @@ export default {
         padding: 0 0.25rem;
       }
     }
-    ul {
+    .van-list {
       margin-top: 20px;
       padding: 0 0.25rem;
-      li {
+      .cell {
         margin-top: 0.2rem;
         color: #fff;
         img {
@@ -271,7 +382,7 @@ export default {
           height: 0.8rem;
           border-radius: 50%;
         }
-        .music-name {
+        .right-part {
           position: relative;
           float: right;
           width: 85%;
@@ -287,13 +398,27 @@ export default {
             width: 92%;
             color: #666;
           }
-          i {
+          .icon-svg {
             position: absolute;
             right: 0;
             top: 0.22rem;
-            .icon-svg {
-              color: #666;
-            }
+            color: #666;
+          }
+        }
+      }
+      .singer {
+        img {
+          width: 1rem;
+          height: 1rem;
+        }
+        .right-part {
+          width: 80%;
+          h4 {
+            font-weight: bold;
+          }
+          .icon-svg {
+            top: 0.42rem;
+            color: #999 !important;
           }
         }
       }

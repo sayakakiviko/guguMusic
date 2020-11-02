@@ -4,9 +4,11 @@
     <div class="title">
       <img src="../../assets/images/logo.gif" class="logo" />
       <h1 class="tit">咕咕~</h1>
-      <div class="search" v-jump="['search']">
-        <icon-svg class="icon-svg" name="icon-search"></icon-svg>
-      </div>
+      <icon-svg
+        class="icon-svg search"
+        name="icon-search"
+        v-jump="['search']"
+      ></icon-svg>
     </div>
     <!--tab选项卡的切换-->
     <van-tabs v-model="tabActive" line-height="1px">
@@ -47,11 +49,11 @@ export default {
   .title {
     margin-bottom: 0.1rem;
     text-align: center;
-    line-height: 0.35rem;
+    line-height: 0.75rem;
     .logo {
       margin-right: 0.1rem;
-      width: 0.5rem;
-      height: 0.5rem;
+      width: 0.7rem;
+      height: 0.7rem;
       vertical-align: middle;
       border-radius: 50%;
     }
@@ -59,10 +61,12 @@ export default {
       display: inline-block;
       font-size: 0.24rem;
     }
-    .search {
+    .search.icon-svg {
       position: absolute;
       right: 0.2rem;
-      top: 0.15rem;
+      top: 0.35rem;
+      width: 0.36rem;
+      height: 0.36rem;
     }
   }
   /deep/.van-tabs--line .van-tabs__wrap {

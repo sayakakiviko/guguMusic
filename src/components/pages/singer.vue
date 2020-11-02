@@ -29,7 +29,7 @@ import singerData from '@/assets/js/singerData';
 export default {
   data() {
     return {
-      topPosition: 130, //自动吸顶时与顶部的距离，750px设计图下为130px
+      topPosition: 154, //自动吸顶时与顶部的距离，750px设计图下为154px
       indexList: [], //侧边索引栏
       singerList: [] //歌手列表
     };
