@@ -76,6 +76,16 @@ export default [
     desc: '搜索',
     components: {
       default: getPage('search')
-    }
+    },
+    children: [
+      {
+        path: '/searchSingerDetail',
+        name: 'searchSingerDetail',
+        desc: '歌手详情',
+        components: {
+          default: getPage('detail/searchSingerDetail')
+        }
+      }
+    ]
   }
 ];

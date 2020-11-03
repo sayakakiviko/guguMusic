@@ -12,7 +12,7 @@
 </template>
 
 <script>
-import commonDetail from './commonDetail';
+import commonDetail from './child/commonDetail';
 export default {
   components: { commonDetail }
 };

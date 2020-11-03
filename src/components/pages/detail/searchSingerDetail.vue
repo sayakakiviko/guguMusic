@@ -1,5 +1,5 @@
 <!-- @format -->
-<!--歌手详情页-->
+<!--歌手详情页（搜索用）-->
 
 <template>
   <div class="singer-detail">
@@ -22,7 +22,7 @@ export default {
   position: absolute;
   left: 0;
   top: 0;
-  z-index: 10;
+  z-index: 99;
   width: 100%;
   min-height: 100%;
 }

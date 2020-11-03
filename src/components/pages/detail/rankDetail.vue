@@ -35,9 +35,9 @@
           :src="item.localArtistPicM || item.localAlbumPicM"
           v-if="!item.songName"
         />
-        <div class="con">
+        <div class="con" :class="{ 'no-play': item.unuseFlag }">
           <!--歌名or歌手or专辑-->
-          <h2>
+          <h3>
             <label
               class="van-ellipsis"
               :style="{ maxWidth: (item.songName && '5rem') || '4rem' }"
@@ -47,7 +47,7 @@
               :src="require('@/assets/images/rank/SQ.png')"
               v-if="item.songName && item.hasSQqq"
             />
-          </h2>
+          </h3>
           <!--歌手-->
           <p class="van-ellipsis" v-if="item.songName">
             <span v-for="(name, i) in item.singerName" :key="i"
@@ -69,6 +69,7 @@
 </template>
 
 <script>
+import { Toast } from 'vant';
 import { mapMutations, mapActions } from 'vuex';
 
 export default {
@@ -149,6 +150,10 @@ export default {
      * @item {string} 点击的对象。若有歌名则直接播放歌曲，否则跳转链接
      */
     selectSong(index, item) {
+      if (item.unuseFlag) {
+        Toast('该歌曲暂时无法播放');
+        return false;
+      }
       if (item.songName) {
         //播放歌曲
         this.selectPlay({
@@ -337,8 +342,11 @@ export default {
       .con {
         line-height: 20px;
         color: #888;
-
-        h2 {
+        &.no-play h3,
+        &.no-play p {
+          color: #444;
+        }
+        h3 {
           font-size: 14px;
           color: #fff;
 

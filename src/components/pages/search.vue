@@ -2,7 +2,7 @@
 <!--搜索-->
 
 <template>
-  <div class="search">
+  <div ref="search" class="search" :class="{ 'show-child': showChild }">
     <van-search
       v-model="value"
       show-action
@@ -19,13 +19,19 @@
       @cancel="$router.go(-1)"
     />
     <!--搜索结果-->
-    <div class="result" v-if="showResult && value">
+    <div
+      class="result"
+      :class="{ pt60: $store.state.miniMode }"
+      v-if="showResult && value"
+    >
       <van-tabs
         v-model="active"
-        line-height="1px"
-        :offset-top="54"
         sticky
-        @rendered="rendered"
+        :offset-top="54"
+        line-height="1px"
+        :before-change="beforeChange"
+        @rendered="onSearch(value, 1)"
+        @change="changeTab"
       >
         <van-tab title="歌曲">
           <van-list
@@ -37,13 +43,19 @@
           >
             <div
               class="cell van-clearfix"
+              :class="{ 'no-play': item.unuseFlag }"
               v-for="(item, index) in result.musics"
-              :key="index"
+              :key="item.id"
+              @click="selectSong(index, item.unuseFlag)"
             >
               <img :src="item.cover || require('@/assets/images/logo.gif')" />
               <div class="right-part">
-                <h4 class="van-ellipsis">{{ item.songName }}</h4>
-                <p>{{ item.singerName }}</p>
+                <h4 class="van-ellipsis">
+                  {{ item.songName }}
+                </h4>
+                <p>
+                  {{ item.singerName }}
+                </p>
                 <icon-svg class="icon-svg" name="icon-more"></icon-svg>
               </div>
             </div>
@@ -61,6 +73,10 @@
               class="singer cell van-clearfix"
               v-for="(item, index) in result.artists"
               :key="index"
+              v-jump="[
+                'searchSingerDetail',
+                { artistId: item.id, img: item.artistPicM }
+              ]"
             >
               <img
                 :src="item.artistPicM || require('@/assets/images/logo.gif')"
@@ -69,6 +85,35 @@
                 <h4>{{ item.title }}</h4>
                 <p>歌曲数量 {{ item.songNum }}</p>
                 <p>专辑数量 {{ item.albumNum }}</p>
+                <van-icon class="icon-svg" name="arrow" />
+              </div>
+            </div>
+          </van-list>
+        </van-tab>
+        <van-tab title="专辑">
+          <van-list
+            v-if="result.albums.length"
+            v-model="loading[active]"
+            :finished="finished[active]"
+            finished-text="没有更多了"
+            @load="onLoad"
+          >
+            <div
+              class="singer cell van-clearfix"
+              v-for="(item, index) in result.albums"
+              :key="index"
+            >
+              <img
+                :src="item.albumPicM || require('@/assets/images/logo.gif')"
+              />
+              <div class="right-part">
+                <h4>{{ item.title }}</h4>
+                <p>
+                  <span v-for="(singer, i) in item.singer" :key="i"
+                    >{{ (i && ',') || '' }}{{ singer.name }}</span
+                  >
+                </p>
+                <p>{{ item.publishDate }}</p>
                 <van-icon class="icon-svg" name="arrow" />
               </div>
             </div>
@@ -125,19 +170,27 @@
         </div>
       </div>
     </div>
+
+    <!--歌手详情-->
+    <transition name="van-slide-right">
+      <router-view></router-view>
+    </transition>
   </div>
 </template>
 
 <script>
-import { Dialog } from 'vant';
+import { Toast, Dialog } from 'vant';
+import { mapActions, mapMutations } from 'vuex';
 
 export default {
   data() {
     return {
       active: 0, //tab激活项
       value: '', //搜索内容
-      loading: [false, false], //列表是否正在加载
-      finished: [false, false], //是否全部加载完毕
+      tabScrollTop: [0, 0, 0], //每个标签页的滚动距离
+      showChild: false, //是否打开了子路由
+      loading: [false, false, false], //列表是否正在加载
+      finished: [false, false, false], //是否全部加载完毕
       disabled: false, //是否禁用输入框
       searchRun: false, //搜索框是否载入动画
       showResult: false, //是否显示搜索结果列表
@@ -147,10 +200,11 @@ export default {
       //搜索结果
       result: {
         musics: [], //歌曲列表
-        artists: [] //歌手列表
+        artists: [], //歌手列表
+        albums: [] //专辑列表
       },
-      resultType: [2, 1], //搜索结果类型。1为歌手，2为歌曲，4为专辑，6为歌单
-      pageNum: 1, //页码
+      resultType: [2, 1, 4], //搜索结果类型。1为歌手，2为歌曲，4为专辑，6为歌单
+      pageNum: [1, 1, 1], //页码
       nowTime: 0 //请求的时间戳，以便节流处理
     };
   },
@@ -163,9 +217,12 @@ export default {
   watch: {
     $route(newVal, oldVal) {
       this.searchRun = newVal.name !== oldVal.name; //其他页进入搜索页才有动画
+      this.showChild = (newVal.name === 'searchSingerDetail' && true) || false;
     }
   },
   methods: {
+    ...mapMutations(['SET_PLAYLIST']),
+    ...mapActions(['selectPlay']),
     /** 获取热门搜索 */
     getHotKey() {
       this.$api['rank/getRankData']({
@@ -206,24 +263,27 @@ export default {
      * @page {number} 页码
      * */
     onSearch(val, page) {
-      let type = ['musics', 'artists']; //列表类型
+      let type = ['musics', 'artists', 'albums'], //列表类型
+        active = this.active,
+        listType = type[active];
+
       this.$api['search/getSearchResult']({
         keyword: val || this.value, //搜索词
         rows: 30, //每页显示数
-        type: this.resultType[this.active], //列表类型。1为歌手，2为歌曲，4为专辑，6为歌单
+        type: this.resultType[active], //列表类型。1为歌手，2为歌曲，4为专辑，6为歌单
         pgc: page //页码
       })
         .then(res => {
-          this.pageNum = page;
+          this.pageNum[active] = page;
 
           //loadMore时为push，否则直接赋值
-          (page > 1 &&
-            this.result[type[this.active]].push(...res[type[this.active]])) ||
-            (this.result[type[this.active]] = res[type[this.active]]);
+          (page > 1 && this.result[listType].push(...res[listType])) ||
+            (this.result[listType] = res[listType]);
 
-          this.result[type[this.active]].length >= res.pgt &&
-            (this.finished[this.active] = true); //数据全部加载完毕
+          this.result[listType].length >= res.pgt &&
+            (this.finished[active] = true); //数据全部加载完毕
 
+          !active && this.SET_PLAYLIST(this.result[listType]); //歌曲列表要把歌曲存入vuex
           //将搜索词存入本地历史记录
           if (page === 1) {
             this.showResult = true;
@@ -244,14 +304,24 @@ export default {
       let time = Date.now();
       //节流处理
       if (time - this.nowTime > 200) {
-        this.onSearch(this.value, ++this.pageNum);
+        this.onSearch(this.value, ++this.pageNum[this.active]);
         this.nowTime = time;
       }
       this.$set(this.loading, this.active, false);
     },
-    /** 切换标签，仅执行一次  */
-    rendered() {
-      this.onSearch(this.value, 1);
+    /** tab切换前 */
+    beforeChange() {
+      this.tabScrollTop[this.active] = this.$refs.search.scrollTop; //记录当前标签页的滚动距离
+      return true;
+    },
+    /**
+     * tab切换后
+     * @index {number} 激活项下标
+     * */
+    changeTab(index) {
+      this.$nextTick(() => {
+        this.$refs.search.scrollTop = this.tabScrollTop[index]; //还原tab的滚动距离
+      });
     },
     /** 清空搜索历史 */
     deleteHistory() {
@@ -265,6 +335,22 @@ export default {
         .catch(() => {
           // on cancel
         });
+    },
+    /**
+     * 点击播放歌曲
+     * @index {number} 歌曲在列表的下标
+     * @bool {boolean} 歌曲是否禁放
+     */
+    selectSong(index, bool) {
+      if (bool) {
+        Toast('该歌曲暂时无法播放');
+        return false;
+      }
+      //播放歌曲
+      this.selectPlay({
+        list: JSON.parse(JSON.stringify(this.result.musics)),
+        index
+      });
     }
   }
 };
@@ -281,6 +367,10 @@ export default {
   width: 100%;
   min-height: 100vh;
   background-color: #222;
+  &.show-child {
+    overflow-y: unset;
+    position: absolute;
+  }
   /deep/.van-search {
     position: sticky;
     top: 0;
@@ -374,8 +464,24 @@ export default {
       margin-top: 20px;
       padding: 0 0.25rem;
       .cell {
+        position: relative;
         margin-top: 0.2rem;
         color: #fff;
+        &.no-play {
+          &:before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 0.8rem;
+            height: 0.8rem;
+            background-color: rgba(0, 0, 0, 0.5);
+            border-radius: 50%;
+          }
+          h4 {
+            color: #666;
+          }
+        }
         img {
           float: left;
           width: 0.8rem;

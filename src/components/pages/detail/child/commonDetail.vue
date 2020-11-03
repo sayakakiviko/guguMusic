@@ -124,7 +124,7 @@ export default {
     window.removeEventListener('scroll', this.getScrollTop); //解绑监听
   },
   methods: {
-    ...mapMutations(['SET_PLAYLIST']),
+    ...mapMutations(['SET_PLAYLIST', 'SET_PLAYERLEVEL']),
     ...mapActions(['selectPlay']),
     /** 获取歌手详情 */
     getSingerDetail() {
@@ -199,13 +199,13 @@ export default {
     showInfo() {
       this.infoShow = true;
       setTimeout(() => {
-        this.$store.commit('SET_PLAYERLEVEL', 0); //隐藏播放页
+        this.SET_PLAYERLEVEL(0); //隐藏播放页
       }, 300);
     },
     /** 关闭歌手资料 */
     closeInfo() {
       this.infoShow = false;
-      this.$store.commit('SET_PLAYERLEVEL', 10); //还原播放页
+      this.SET_PLAYERLEVEL(10); //还原播放页
     },
     /**
      * 点击播放歌曲
