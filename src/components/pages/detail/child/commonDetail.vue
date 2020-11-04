@@ -212,10 +212,12 @@ export default {
      * @index {number} 歌曲在列表的下标
      */
     selectSong(index) {
+      let isFilter = false; //过滤后的列表，无需再次过滤
       //播放歌曲
       this.selectPlay({
         list: JSON.parse(JSON.stringify(this.songList)),
-        index
+        index,
+        isFilter
       });
     }
   }
@@ -241,7 +243,7 @@ export default {
       top: 0;
       bottom: 0;
       margin: auto;
-      /*width: 1.68rem;*/
+      width: 80%;
       height: 1.68rem;
       text-align: center;
       font-size: 0.28rem;

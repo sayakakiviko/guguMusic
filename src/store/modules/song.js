@@ -2,11 +2,11 @@
 export default {
   state: {
     playerLevel: 10, //播放页层级
-    singer: {}, //歌手
     songInfo: {}, //歌曲
     playing: false, //是否正在播放歌曲
     fullScreen: false, //是否位于播放页
     miniMode: false, //是否处于mini模式
+    isFilterSong: false, //是否要将无法播放歌曲从列表过滤掉
     playList: [], //播放列表，实际播放顺序的列表，该列表随机模式时排序会变
     songList: [], //歌曲列表，即mini模式的歌曲列表，该列表排序不变
     modeIndex: 0, //播放模式的下标。0顺序播放、1单曲循环、2随机播放
@@ -15,9 +15,6 @@ export default {
     rankScrollTop: 0 //榜单详情滚动距离
   },
   mutations: {
-    SET_SINGER(state, singer) {
-      state.singer = singer;
-    },
     //设置播放页层级
     SET_PLAYERLEVEL(state, playerLevel) {
       state.playerLevel = playerLevel;
@@ -52,6 +49,10 @@ export default {
     SET_MODEINDEX(state, modeIndex) {
       state.modeIndex = modeIndex;
     },
+    //是否过滤无法播放的歌曲
+    SET_ISFILTERSONG(state, isFilterSong) {
+      state.isFilterSong = isFilterSong;
+    },
     //当前播放歌曲位于播放列表的下标
     SET_CURRENTINDEX(state, currentIndex) {
       state.currentIndex = currentIndex;
@@ -79,8 +80,11 @@ export default {
      * 点击歌曲开始播放
      * @list {array} 歌曲列表
      * @index {number} 歌曲位于列表的下标
+     * @isFilter {boolean} 列表是否需要过滤
      * */
-    selectPlay({ commit, state }, { list, index }) {
+    selectPlay({ commit, state }, { list, index, isFilter }) {
+      if (state.songInfo.songId === list[index].songId) return; //同一首歌无需重播
+      console.log(23);
       let songIndex = -1;
       commit('SET_SONGLIST', list); //歌曲列表
       if (state.modeIndex === 2) {
@@ -95,6 +99,7 @@ export default {
       commit('SET_CURRENTINDEX', index); //位于播放列表第几首歌
       !state.miniMode && commit('SET_FULLSCREEN', true); //非mini模式才打开播放器
       commit('SET_PLAYING', true); //是否正在播放歌曲
+      commit('SET_ISFILTERSONG', isFilter); //列表是否过滤
     },
     /**
      * 删除单首歌曲

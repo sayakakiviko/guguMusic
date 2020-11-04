@@ -2,7 +2,7 @@
 <!--排行榜单详情列表-->
 
 <template>
-  <div class="rank-detail">
+  <div class="rank-detail" :class="{ pt60: $store.state.miniMode }">
     <van-icon name="arrow-left" size="0.4rem" v-back />
     <!--动态绑定banner图。周榜图是绑在style上，其他的绑在class上-->
     <div
@@ -102,7 +102,7 @@ export default {
     }
   },
   methods: {
-    ...mapMutations(['SET_PLAYLIST', 'SET_RANKSCROLLTOP']),
+    ...mapMutations(['SET_RANKSCROLLTOP']),
     ...mapActions(['selectPlay']),
     /**
      * 获取排行榜单
@@ -155,10 +155,12 @@ export default {
         return false;
       }
       if (item.songName) {
+        let isFilter = true;
         //播放歌曲
         this.selectPlay({
           list: this.dataList.slice(),
-          index
+          index,
+          isFilter
         });
       } else {
         //进入列表
@@ -282,6 +284,8 @@ export default {
       left: 0;
       right: 0;
       bottom: -0.8rem;
+      width: 80%;
+      margin: auto;
       text-align: center;
       font-size: 0.38rem;
       line-height: 0.8rem;

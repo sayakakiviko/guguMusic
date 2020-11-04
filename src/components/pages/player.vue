@@ -282,7 +282,8 @@ export default {
         longName: false, //是否是长歌名
         isDrag: false, //是否正在拖动进度条
         like: false, //是否喜欢歌曲
-        index: 0 //歌曲位于歌曲列表的下标
+        active: 0, //歌曲位于歌曲列表的下标
+        miniOldIndex: 0 //上一首播放的歌曲位于播放列表的下标，迷你模式切歌用
       },
       isShowList: false, //歌曲列表是否显示
       rate: 0 //进度条百分比
@@ -293,6 +294,7 @@ export default {
     'songInfo',
     'playing',
     'modeIndex',
+    'isFilterSong',
     'songList',
     'playList',
     'fullScreen',
@@ -302,6 +304,13 @@ export default {
   watch: {
     //监听当前歌曲
     songInfo(newSong, oldSong) {
+      //过滤掉不能播放的歌曲
+      if (this.isFilterSong) {
+        this.playList.forEach(item => {
+          !item.listenUrl && this.delSong(item);
+        });
+        this.SET_ISFILTERSONG(false);
+      }
       if (!newSong) return;
       if (!this.playList.length || newSong.songId === oldSong.songId) return; //同一首歌无需重播
       this.lyric && this.lyric.stop(); //切歌时有歌词，则暂停上一首歌词滚动
@@ -309,6 +318,7 @@ export default {
       this.$nextTick(() => {
         //获取正在播放歌曲的下标
         this.songState.active = this.findIndex(this.songList);
+        this.songState.miniOldIndex = this.currentIndex;
 
         this.getLyric(this.songInfo.copyrightId); //获取当前歌曲歌词
         this.$refs.audio.play();
@@ -346,6 +356,7 @@ export default {
       'SET_FULLSCREEN',
       'SET_MINIMODE',
       'SET_MODEINDEX',
+      'SET_ISFILTERSONG',
       'SET_PLAYING',
       'SET_SONGLIST',
       'SET_PLAYLIST',
@@ -491,11 +502,15 @@ export default {
      * @index {number} 当前页的索引
      */
     changeSwipe(index) {
-      //第一首切到最后一首 和 最后一首切到第一首情况
-      (!index || index + 1 === this.playList.length) &&
-        this.SET_CURRENTINDEX(index + 1);
+      let oldIndex = this.songState.miniOldIndex;
+      //上一首，第一首切到最后一首
+      !oldIndex &&
+        index === this.playList.length - 1 &&
+        (oldIndex = this.playList.length);
+      //下一首，最后一首切到第一首情况
+      !index && oldIndex === this.playList.length - 1 && (oldIndex = index - 1);
 
-      this.prevNextSong(this.currentIndex >= index);
+      this.prevNextSong(oldIndex >= index);
     },
     /**
      * 播放/暂停歌曲
@@ -541,9 +556,11 @@ export default {
      * @index {number} 歌曲下标
      */
     selectSong(index) {
+      let isFilter = false; //过滤后的列表，无需再次过滤
       this.selectPlay({
         list: JSON.parse(JSON.stringify(this.songList)),
-        index
+        index,
+        isFilter
       });
     },
     /**

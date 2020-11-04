@@ -339,17 +339,19 @@ export default {
     /**
      * 点击播放歌曲
      * @index {number} 歌曲在列表的下标
-     * @bool {boolean} 歌曲是否禁放
+     * @bool {boolean} 歌曲是否无法播放
      */
     selectSong(index, bool) {
       if (bool) {
         Toast('该歌曲暂时无法播放');
-        return false;
+        return;
       }
+      let isFilter = false; //搜索的歌曲需要过滤
       //播放歌曲
       this.selectPlay({
         list: JSON.parse(JSON.stringify(this.result.musics)),
-        index
+        index,
+        isFilter
       });
     }
   }
