@@ -68,7 +68,17 @@ export default [
     desc: '我的',
     components: {
       default: getPage('my')
-    }
+    },
+    children: [
+      {
+        path: '/myDetail',
+        name: 'myDetail',
+        desc: '我的-详情',
+        components: {
+          default: getPage('detail/myDetail')
+        }
+      }
+    ]
   },
   {
     path: '/search',

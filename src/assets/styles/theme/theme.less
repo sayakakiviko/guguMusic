@@ -1,14 +1,27 @@
-@themeBg: #222;
-@themeBgSub: #333;
-@themeColor: #ffcd32;
-@fontColor: #999;
-@fontColorSub: #fff;
-
 #app {
   min-height: 100%;
   /***默认主题***/
-  background-color: @themeBg;
+  .theme();
+  .van-index-bar__sidebar {
+    background-color: rgb(24, 24, 24, 0.5);
+  }
 
+  /***亮色主题***/
+  &.light {
+    .theme(#fff,#f4f4f4,#EE0A24,#666,#999,#333);
+    .van-index-bar__sidebar {
+      background-color: rgb(246, 246, 246, 0.5);
+    }
+    .player .mini-player .icon-svg{
+      color: #8b0c1a;
+    }
+  }
+}
+
+.theme(@themeBg: #222,@themeBgSub: #333,@themeColor: #ffcd32,@fontColor: #999,@fontColorDn: #666,@fontColorSub: #fff){
+  &{
+    background-color: @themeBg;
+  }
   .header-bar {
     background-color: @themeBg;
     .title .tit, .user {
@@ -33,10 +46,10 @@
       .main{
         color: @fontColorSub;
         .disc{
-          border: 10px solid #393939;
+          border: 10px solid @themeBgSub;
         }
         .lyric{
-          color: #666;
+          color: @fontColorDn;
           &.warp:before{
             background-image: linear-gradient(
                     180deg,
@@ -56,7 +69,7 @@
       }
       .bottom{
         .option .icon-svg.icon-svg__icon-like-fill {
-          color: #d93f30;
+          color: @themeColor;
         }
         .progress-warp{
           color: @fontColorSub;
@@ -65,7 +78,6 @@
           }
           .van-slider__button{
             background-color: @themeColor;
-            border: 3px solid @fontColorSub;
           }
         }
       }
@@ -108,7 +120,6 @@
       }
     }
     .van-index-bar__sidebar {
-      background-color: rgba(24, 24, 24, 0.5);
       color: @fontColor;
       .van-index-bar__index--active {
         color: @themeColor !important;
@@ -130,9 +141,9 @@
     .song-list {
       background-color: @themeBg;
       .cell p {
-        color: #b9b9b9;
+        color: @fontColor;
         &.name {
-          color: #666;
+          color: @fontColorDn;
         }
       }
     }
@@ -141,7 +152,40 @@
       color: #b9b9b9;
     }
   }
-  
+
+  //排行
+  .rank{
+    h2{
+      color: @themeColor;
+    }
+    .main-rank{
+      ul{
+        color: @fontColorDn;
+        .van-icon{
+          color: @fontColor;
+        }
+      }
+    }
+    .rank-detail{
+      background-color: @themeBg;
+      .list{
+        .ranking{
+          color: @themeColor;
+        }
+        .con{
+          color: #888;
+          &.no-play h3,
+          &.no-play p {
+            color: #444;
+          }
+          h3{
+            color: @fontColorSub;
+          }
+        }
+      }
+    }
+  }
+
   //我的
   .my{
     .name{
@@ -154,7 +198,58 @@
       }
     }
     button{
-      color: #999;
+      background-color: @themeBgSub;
+      color: @fontColor;
+    }
+  }
+
+  //搜索
+  .search{
+    background-color: @themeBg;
+    .van-search .van-icon {
+      color: @fontColor;
+    }
+    .van-search__content {
+      background-color: @themeBgSub;
+      .van-field__control {
+        color: @fontColorSub;
+      }
+    }
+    .van-search__action {
+      color: @fontColorSub;
+    }
+    .hot-key,
+    .history{
+      color: @fontColor;
+    }
+    .history .clear .icon-svg{
+      color: @fontColorDn;
+    }
+    .search-key{
+      color: @fontColorSub;
+      p{
+        color: @themeColor;
+      }
+      li i{
+        color: @fontColor;
+      }
+    }
+    .result .cell{
+      color: @fontColorSub;
+      &.no-play h4 {
+        color: @fontColorDn;
+      }
+      .right-part{
+        h4{
+          color: #b9b9b9;
+        }
+        p,.icon-svg{
+          color: @fontColorDn;
+        }
+      }
+    }
+    .singer .right-part .icon-svg{
+      color: @fontColor;
     }
   }
 
@@ -181,17 +276,7 @@
   .van-icon {
     color: @themeColor;
   }
-
-  /***亮色主题***/
-  &.light {
-    background-color: #fff;
-
-    .header-bar {
-      background-color: #fff;
-
-      .title .tit, .user {
-        color: #EE0A24;
-      }
-    }
+  .icon-svg{
+    color: @themeColor;
   }
 }

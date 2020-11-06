@@ -82,10 +82,10 @@
         <div class="bottom">
           <!--喜欢&更多-->
           <div class="option">
-            <i @click="songState.like = !songState.like"
+            <i @click="likeSong"
               ><icon-svg
                 class="icon-svg"
-                :name="(songState.like && 'icon-like-fill') || 'icon-like'"
+                :name="(songInfo.likeFlag && 'icon-like-fill') || 'icon-like'"
               ></icon-svg
             ></i>
             <i @click="clickMore"
@@ -281,7 +281,6 @@ export default {
         lyricShow: false, //是否展示歌词页
         longName: false, //是否是长歌名
         isDrag: false, //是否正在拖动进度条
-        like: false, //是否喜欢歌曲
         active: 0, //歌曲位于歌曲列表的下标
         miniOldIndex: 0 //上一首播放的歌曲位于播放列表的下标，迷你模式切歌用
       },
@@ -452,6 +451,22 @@ export default {
     showSinger(e, name) {
       //若文字溢出
       e.target.scrollWidth - e.target.clientWidth > 0 && Toast(...name);
+    },
+    /** 喜欢歌曲 */
+    likeSong() {
+      this.songInfo.likeFlag = !this.songInfo.likeFlag;
+
+      let likeList = JSON.parse(localStorage.getItem('likeSongList')) || []; //喜欢列表
+      if (this.songInfo.likeFlag) {
+        //喜欢
+        this.songInfo.likeFlag = true;
+        likeList.push(this.songInfo);
+      } else {
+        //取消喜欢
+        this.songInfo.likeFlag = false;
+        likeList.splice(this.findIndex(likeList), 1);
+      }
+      localStorage.setItem('likeSongList', JSON.stringify(likeList));
     },
     /** 点击更多 */
     clickMore() {},
@@ -890,6 +905,7 @@ export default {
               box-sizing: border-box;
               width: 16px;
               height: 16px;
+              border: 3px solid #fff;
               border-radius: 50%;
             }
           }

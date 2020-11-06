@@ -65,6 +65,12 @@ export default {
         state.songInfo.listenUrl = state.songInfo.mp3;
         state.songInfo.songId = state.songInfo.copyrightId;
       }
+
+      //播放歌曲时，若该歌曲已标记了喜欢
+      findIndex(
+        JSON.parse(localStorage.getItem('likeSongList')),
+        state.songInfo
+      ) !== -1 && (state.songInfo.likeFlag = true);
     },
     //当前播放歌曲位于歌曲列表的下标
     SET_SONGINDEX(state, songIndex) {
@@ -84,7 +90,6 @@ export default {
      * */
     selectPlay({ commit, state }, { list, index, isFilter }) {
       if (state.songInfo.songId === list[index].songId) return; //同一首歌无需重播
-      console.log(23);
       let songIndex = -1;
       commit('SET_SONGLIST', list); //歌曲列表
       if (state.modeIndex === 2) {

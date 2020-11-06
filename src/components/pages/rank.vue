@@ -232,7 +232,6 @@ export default {
     margin: 0.4rem 0;
     text-align: center;
     font-size: 0.38rem;
-    color: #ffcd32;
   }
   .week-rank {
     position: relative;
@@ -253,7 +252,7 @@ export default {
         text-align: center;
         font-size: 0.3rem;
         line-height: 0.56rem;
-        color: #ffcd32;
+        color: #fff;
         border-radius: 3px;
       }
       h3 {
@@ -276,36 +275,32 @@ export default {
     }
   }
   .main-rank {
-    ul {
-      color: #666;
-      li {
-        padding-top: 20px;
-        &:first-child {
-          padding-top: 0;
+    li {
+      padding-top: 20px;
+      &:first-child {
+        padding-top: 0;
+      }
+      img {
+        width: 1.96rem;
+        vertical-align: middle;
+      }
+      .right {
+        display: inline-block;
+        width: 4.3rem;
+        margin-left: 20px;
+        vertical-align: middle;
+        p {
+          overflow: hidden;
+          width: 100%;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          font-size: 14px;
+          line-height: 28px;
         }
-        img {
-          width: 1.96rem;
-          vertical-align: middle;
-        }
-        .right {
-          display: inline-block;
-          width: 4.3rem;
-          margin-left: 20px;
-          vertical-align: middle;
-          p {
-            overflow: hidden;
-            width: 100%;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-            font-size: 14px;
-            line-height: 28px;
-          }
-        }
-        .van-icon {
-          margin-left: 0.1rem;
-          vertical-align: middle;
-          color: #999 !important;
-        }
+      }
+      .van-icon {
+        margin-left: 0.1rem;
+        vertical-align: middle;
       }
     }
   }

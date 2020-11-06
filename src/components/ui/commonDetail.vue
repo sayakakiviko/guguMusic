@@ -1,19 +1,20 @@
 <!-- @format -->
-<!--歌手详情页-->
+<!--歌手详情-->
 
 <template>
   <div
     ref="singerDetail"
     class="common-detail"
-    :class="{ pt60: $store.state.miniMode }"
+    :class="{ pt50: $store.state.miniMode }"
   >
     <!--    <smooth-scroll>-->
     <van-icon name="arrow-left" size="0.4rem" v-back />
-    <div class="singer-img" :class="{ sticky: isSticky }">
-      <div>
-        <img :src="avatar" @click="showInfo" />
-        <p v-backTop>{{ singerDetail.artistName || albumFlag }}</p>
-      </div>
+    <div
+      class="singer-img"
+      :class="{ sticky: isSticky }"
+      :style="{ backgroundImage: `url('${avatar}')` }"
+    >
+      <p v-backTop>{{ singerDetail.artistName || albumFlag }}</p>
     </div>
     <!--歌曲列表-->
     <div class="song-list" :class="{ sticky: isSticky }" v-if="songList.length">
@@ -89,7 +90,7 @@ export default {
       infoShow: false, //歌手详情显示状态
       //页面上需要获取处理的高度
       page: {
-        topHigh: 275, //顶部标签栏需空出的高度，基于750px
+        topHigh: 440, //顶部标签栏需空出的高度，基于750px。该值加85就是歌手背景图高度，85为sticky时topbar占高
         scrollHeight: 0, //滚动距离
         pageHeight: 0, //页面高度
         clientHeight: document.documentElement.clientHeight //可视区高度
@@ -229,45 +230,41 @@ export default {
   .singer-img {
     position: relative;
     width: 100%;
-    height: 3.6rem;
-    background-image: url('~@/assets/images/singer-detail-bg.jpg');
+    height: 0;
+    padding-top: 70%;
+    background-size: cover;
+    transform-origin: top;
+    &:before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(7, 17, 27, 0.4);
+    }
     &.sticky {
       position: fixed;
-      top: -2.75rem;
+      top: -4.4rem;
       z-index: 1;
     }
-    div {
+    p {
       position: absolute;
       left: 0;
       right: 0;
-      top: 0;
-      bottom: 0;
-      margin: auto;
+      bottom: 0.26rem;
       width: 80%;
-      height: 1.68rem;
+      margin: auto;
       text-align: center;
       font-size: 0.28rem;
       font-weight: bold;
-      img {
-        margin-bottom: 0.3rem;
-        width: 1.68rem;
-        height: 1.68rem;
-        border-radius: 50%;
-      }
+      color: #fff;
     }
   }
-  /*/deep/.sticky .van-hairline--top-bottom {
-    position: fixed;
-    top: 0.85rem;
-    z-index: 1;
-    width: 100%;
-  }*/
   .song-list {
-    //margin-top: 0;
     padding: 0.3rem 0;
-    //transition: margin-top 0.3s;
     &.sticky {
-      padding-top: 3.9rem;
+      padding-top: 5.55rem;
     }
     //&.hide{
     //  margin-top: calc(100vh - 3.6rem);

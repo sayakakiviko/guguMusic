@@ -21,7 +21,7 @@
     <!--搜索结果-->
     <div
       class="result"
-      :class="{ pt60: $store.state.miniMode }"
+      :class="{ pt50: $store.state.miniMode }"
       v-if="showResult && value"
     >
       <van-tabs
@@ -215,9 +215,12 @@ export default {
       (this.historyKey = JSON.parse(localStorage.getItem('historyKey')));
   },
   watch: {
-    $route(newVal, oldVal) {
-      this.searchRun = newVal.name !== oldVal.name; //其他页进入搜索页才有动画
-      this.showChild = (newVal.name === 'searchSingerDetail' && true) || false;
+    '$route.name': {
+      immediate: true,
+      handler(newVal, oldVal) {
+        this.searchRun = newVal !== oldVal; //其他页进入搜索页才有动画
+        this.showChild = (newVal === 'searchSingerDetail' && true) || false;
+      }
     }
   },
   methods: {
@@ -368,7 +371,6 @@ export default {
   z-index: 10;
   width: 100%;
   min-height: 100vh;
-  background-color: #222;
   &.show-child {
     overflow-y: unset;
     position: absolute;
@@ -378,11 +380,8 @@ export default {
     top: 0;
     z-index: 1;
     width: 100%;
-    .van-icon {
-      color: #999 !important;
-      &.van-icon-search {
-        font-size: 22px;
-      }
+    .van-icon.van-icon-search {
+      font-size: 22px;
     }
   }
   .search-run {
@@ -394,20 +393,10 @@ export default {
       transform: translateX(0);
     }
   }
-  /deep/.van-search__content {
-    background-color: #333;
-    .van-field__control {
-      color: #fff;
-    }
-  }
-  .van-search__action {
-    color: #fff;
-  }
   .hot-key,
   .history {
     margin-bottom: 20px;
     padding: 0 0.25rem;
-    color: #999;
     p {
       margin: 10px 0 20px;
       font-size: 14px;
@@ -425,17 +414,14 @@ export default {
     .icon-svg {
       width: 0.36rem;
       height: 0.36rem;
-      color: #666;
     }
   }
   .search-key {
     padding: 0 0.25rem;
-    color: #fff;
     font-size: 16px;
     p {
       padding: 5px 0 10px;
       border-bottom: 1px solid #333;
-      color: #ffcd32;
     }
     li {
       position: relative;
@@ -447,7 +433,6 @@ export default {
         position: absolute;
         left: -24px;
         top: 14px;
-        color: #999 !important;
       }
     }
   }
@@ -468,7 +453,6 @@ export default {
       .cell {
         position: relative;
         margin-top: 0.2rem;
-        color: #fff;
         &.no-play {
           &:before {
             content: '';
@@ -479,9 +463,6 @@ export default {
             height: 0.8rem;
             background-color: rgba(0, 0, 0, 0.5);
             border-radius: 50%;
-          }
-          h4 {
-            color: #666;
           }
         }
         img {
@@ -500,17 +481,14 @@ export default {
           h4 {
             width: 92%;
             margin-bottom: 0.1rem;
-            color: #b9b9b9;
           }
           p {
             width: 92%;
-            color: #666;
           }
           .icon-svg {
             position: absolute;
             right: 0;
             top: 0.22rem;
-            color: #666;
           }
         }
       }
@@ -526,7 +504,6 @@ export default {
           }
           .icon-svg {
             top: 0.42rem;
-            color: #999 !important;
           }
         }
       }

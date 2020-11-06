@@ -1,12 +1,14 @@
 <!-- @format -->
 
 <template>
-  <div id="app" :class="{ pt60: $store.state.miniMode }">
-    <headerBar></headerBar>
-    <keep-alive>
-      <router-view />
-    </keep-alive>
-    <player></player>
+  <div id="app">
+    <div :class="{ pt50: $store.state.miniMode }">
+      <headerBar></headerBar>
+      <keep-alive>
+        <router-view />
+      </keep-alive>
+      <player></player>
+    </div>
   </div>
 </template>
 
@@ -37,7 +39,6 @@ export default {
 };
 </script>
 <style lang="less">
-@import url('./assets/styles/base.less');
 html,
 body {
   overflow-x: hidden;
@@ -58,9 +59,8 @@ body {
     width: 0.42rem;
     height: 0.42rem;
     vertical-align: middle;
-    color: #ffcd32;
   }
-  .pt60 {
+  .pt50 {
     padding-bottom: 50px;
   }
 }

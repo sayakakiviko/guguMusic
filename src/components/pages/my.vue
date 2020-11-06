@@ -6,21 +6,21 @@
     <img src="../../assets/images/logo.gif" class="avatar" />
     <p class="name">那个念想</p>
     <ul class="menu">
-      <li>
-        <i><icon-svg class="icon-svg" name="icon-like-fill"></icon-svg></i
-        >我喜欢的
+      <li v-jump="['myDetail', { type: 'like' }]">
+        <icon-svg class="icon-svg" name="icon-like-fill"></icon-svg>我喜欢的
       </li>
-      <li>
-        <i><icon-svg class="icon-svg" name="icon-time"></icon-svg></i>最近播放
-      </li>
-      <li>
-        <i><icon-svg class="icon-svg" name="icon-user"></icon-svg></i>自建歌单
-      </li>
-      <li @click="changeTheme('light')">
-        <i><icon-svg class="icon-svg" name="icon-skin"></icon-svg></i>主题换肤
+      <li><icon-svg class="icon-svg" name="icon-time"></icon-svg>最近播放</li>
+      <li><icon-svg class="icon-svg" name="icon-user"></icon-svg>自建歌单</li>
+      <li v-jump="['myDetail', { type: 'skin' }]">
+        <icon-svg class="icon-svg" name="icon-skin"></icon-svg>主题换肤
       </li>
     </ul>
     <button @click="loginOut">退出登录</button>
+
+    <!--详情-->
+    <transition name="van-slide-right">
+      <router-view></router-view>
+    </transition>
   </div>
 </template>
 
@@ -33,9 +33,6 @@ export default {
   },
   created() {},
   methods: {
-    changeTheme(theme) {
-      document.getElementById('app').className = theme;
-    },
     /** 退出登录  */
     loginOut() {
       Dialog.confirm({
@@ -76,8 +73,9 @@ export default {
       width: 25%;
       padding: 20px 0;
       text-align: center;
-      i {
+      .icon-svg {
         display: block;
+        width: 100%;
         margin-bottom: 10px;
       }
     }
@@ -87,10 +85,8 @@ export default {
     width: 7rem;
     height: 40px;
     margin: 20px auto;
-    background-color: #333;
     border: none;
     border-radius: 30px;
-    /*color: #ee807d;*/
   }
 }
 </style>

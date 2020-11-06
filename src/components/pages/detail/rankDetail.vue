@@ -2,7 +2,7 @@
 <!--排行榜单详情列表-->
 
 <template>
-  <div class="rank-detail" :class="{ pt60: $store.state.miniMode }">
+  <div class="rank-detail" :class="{ pt50: $store.state.miniMode }">
     <van-icon name="arrow-left" size="0.4rem" v-back />
     <!--动态绑定banner图。周榜图是绑在style上，其他的绑在class上-->
     <div
@@ -187,7 +187,6 @@ export default {
   z-index: 10;
   width: 100%;
   min-height: 100%;
-  background-color: #222;
 
   .banner {
     overflow: hidden;
@@ -325,7 +324,6 @@ export default {
         margin-right: 20px;
         text-align: center;
         font-size: 18px;
-        color: #ffcd32;
       }
 
       &:nth-child(1) .ranking {
@@ -345,14 +343,8 @@ export default {
 
       .con {
         line-height: 20px;
-        color: #888;
-        &.no-play h3,
-        &.no-play p {
-          color: #444;
-        }
         h3 {
           font-size: 14px;
-          color: #fff;
 
           p {
             margin-top: 4px;
