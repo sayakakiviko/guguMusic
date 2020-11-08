@@ -294,7 +294,7 @@ export default {
 
             this.historyKey.unshift(this.value); //往数组前添加
             this.historyKey = this.$removal(this.historyKey); //去重
-            this.historyKey.length >= 10 && this.historyKey.pop(); //最多10条搜索历史
+            this.historyKey.length > 10 && this.historyKey.pop(); //最多10条搜索历史
             localStorage.setItem('historyKey', JSON.stringify(this.historyKey));
           }
         })

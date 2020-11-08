@@ -63,11 +63,7 @@
             :class="{ show: songState.lyricShow }"
             @touchmove.stop
           >
-            <!--            <div-->
-            <!--              class="roll"-->
-            <!--              :style="{ top: `calc(45% - ${lyricLine * 38}px)` }"-->
-            <!--            >-->
-            <div ref="lyricRoll" class="roll">
+            <div class="roll">
               <p
                 v-for="(line, i) in lyric.lines"
                 :key="i"
@@ -88,8 +84,12 @@
                 :name="(songInfo.likeFlag && 'icon-like-fill') || 'icon-like'"
               ></icon-svg
             ></i>
-            <i @click="clickMore"
-              ><icon-svg class="icon-svg" name="icon-more"></icon-svg
+            <i @click="isShowMore = true"
+              ><icon-svg
+                class="icon-svg"
+                name="icon-more"
+                @click="isShowMore = true"
+              ></icon-svg
             ></i>
           </div>
           <!--进度条-->
@@ -102,8 +102,8 @@
                 v-model="rate"
                 bar-height="4px"
                 @change="rateChange"
-                @drag-start="dragStart"
-                @drag-end="dragEnd"
+                @drag-start="songState.isDrag = true"
+                @drag-end="songState.isDrag = false"
               />
             </div>
             <span class="time">{{ songTime.duration | formatSongTime }}</span>
@@ -245,6 +245,95 @@
       </div>
       <div class="close-list" @click="isShowList = false">关闭</div>
     </van-popup>
+    <!--更多弹窗-->
+    <van-popup
+      v-model="isShowMore"
+      round
+      position="bottom"
+      :duration="0.15"
+      class="more-popup"
+      :style="{ height: '24%' }"
+    >
+      <ul class="cell-list">
+        <li @click="showFavorite">
+          <i>
+            <icon-svg class="icon-svg" name="icon-favorite"></icon-svg>
+          </i>
+          <p>加入歌单</p>
+        </li>
+        <li @click="download">
+          <i>
+            <icon-svg class="icon-svg" name="icon-download"></icon-svg>
+          </i>
+          <p>下载歌曲</p>
+        </li>
+      </ul>
+      <!--控制音量-->
+      <div class="progress-warp">
+        <icon-svg class="icon-svg" name="icon-quiet"></icon-svg>
+        <div class="progress">
+          <van-slider
+            v-model="volume"
+            bar-height="4px"
+            @change="volumeChange"
+          />
+        </div>
+        <icon-svg class="icon-svg" name="icon-sound"></icon-svg>
+      </div>
+      <div class="close-list" @click="isShowMore = false">关闭</div>
+    </van-popup>
+    <!--歌单弹窗-->
+    <van-popup
+      v-model="isShowFavorite"
+      round
+      position="bottom"
+      :duration="0.15"
+      class="favorite-popup"
+      :style="{ height: '60%' }"
+    >
+      <div class="header">
+        <span style="padding-left: 0;">收藏到歌单</span>
+        <button @click="showSheet"><van-icon name="plus" />新建歌单</button>
+      </div>
+      <ul class="favorite-list">
+        <li>
+          <img src="../../assets/images/logo.gif" class="logo" />
+          <div class="right-part">
+            <p>我喜欢的音乐</p>
+            <span>3首</span>
+          </div>
+        </li>
+        <li>
+          <img src="../../assets/images/logo.gif" class="logo" />
+          <div class="right-part">
+            <p>我喜欢的音乐</p>
+            <span>3首</span>
+          </div>
+        </li>
+      </ul>
+    </van-popup>
+    <!--新建歌单弹窗-->
+    <van-popup
+      v-model="isShowSheet"
+      round
+      position="bottom"
+      :duration="0.15"
+      class="sheet-popup"
+      :style="{ height: '15%' }"
+    >
+      <div class="header">
+        <span style="padding-left: 0;" @click="isShowSheet = false">取消</span>
+        <p>新建歌单</p>
+        <label @click="finishSheet">完成</label>
+      </div>
+      <van-field
+        v-model="sheetName"
+        placeholder="歌单标题，限20字"
+        maxlength="20"
+        clearable
+        autofocus
+      />
+    </van-popup>
     <audio
       ref="audio"
       :src="songInfo.listenUrl"
@@ -284,8 +373,13 @@ export default {
         active: 0, //歌曲位于歌曲列表的下标
         miniOldIndex: 0 //上一首播放的歌曲位于播放列表的下标，迷你模式切歌用
       },
-      isShowList: false, //歌曲列表是否显示
-      rate: 0 //进度条百分比
+      isShowList: false, //是否显示歌曲列表
+      isShowMore: false, //是否显示更多弹窗
+      isShowFavorite: false, //是否显示歌单弹窗
+      isShowSheet: false, //是否显示新建歌单弹窗
+      sheetName: '', //歌单标题
+      rate: 0, //进度条百分比
+      volume: 80 //音量
     };
   },
   computed: mapState([
@@ -310,7 +404,7 @@ export default {
         });
         this.SET_ISFILTERSONG(false);
       }
-      if (!newSong) return;
+      if (!newSong) return; //该歌曲存在
       if (!this.playList.length || newSong.songId === oldSong.songId) return; //同一首歌无需重播
       this.lyric && this.lyric.stop(); //切歌时有歌词，则暂停上一首歌词滚动
 
@@ -325,6 +419,14 @@ export default {
         this.songState.longName = false; //隐藏长歌名
         this.fullScreen ? this.showSongName() : this.showSongTitle(); //切歌后处于迷你模式需要重新设计迷你标题运动动画
         this.$refs.lyric.scrollTop = 0; //每次切歌后歌词滚动top重置
+
+        //将歌曲存入历史播放列表
+        let historySong =
+          JSON.parse(localStorage.getItem('historySongList')) || [];
+        historySong.push(this.songInfo);
+        historySong = this.$removal(historySong, 'songId'); //依据songId去重
+        historySong.length > 100 && historySong.pop(); //最多100条记录
+        localStorage.setItem('historySongList', JSON.stringify(historySong));
       });
     },
     //是否正在播放歌曲
@@ -391,17 +493,10 @@ export default {
      * @val {number} 进度百分比
      * */
     rateChange(val) {
-      let time = (this.songTime.duration * val) / 100;
+      let time = (this.songTime.duration * val) / 100; //歌曲当前播放时间
       this.$refs.audio.currentTime = time;
+      !this.playing && this.togglePlay(); //拖动滚动条时若处于暂停状态则播放
       this.lyric && this.lyric.seek(time * 1000); //拖动进度条后重设歌词滚动距离
-    },
-    /** 开始拖动时触发 */
-    dragStart() {
-      this.songState.isDrag = true;
-    },
-    /** 结束拖动时触发 */
-    dragEnd() {
-      this.songState.isDrag = false;
     },
     /** 打开播放页 */
     showPlayer() {
@@ -468,8 +563,6 @@ export default {
       }
       localStorage.setItem('likeSongList', JSON.stringify(likeList));
     },
-    /** 点击更多 */
-    clickMore() {},
     /** 更换播放模式 */
     changMode() {
       let modeIndex = (this.modeIndex + 1) % 3;
@@ -599,6 +692,34 @@ export default {
         .catch(() => {
           // on cancel
         });
+    },
+    /**
+     * 显示收藏歌单弹窗
+     * @id {string} id
+     */
+    showFavorite() {
+      this.isShowMore = false;
+      this.isShowFavorite = true;
+    },
+    /** 下载歌曲 */
+    download() {
+      // window.open(this.songInfo.listenUrl);
+    },
+    /**
+     * 调整音量
+     * @val {number} 音量百分比
+     */
+    volumeChange(val) {
+      this.$refs.audio.volume = val / 100;
+    },
+    /** 开始新建歌单 */
+    showSheet() {
+      this.isShowFavorite = false;
+      this.isShowSheet = true;
+    },
+    /** 完成新建歌单 */
+    finishSheet() {
+      this.isShowSheet = false;
     },
     /**
      * 动画进入事件，当cd从隐藏到显示的动画
@@ -739,6 +860,20 @@ export default {
         flex: 1;
         padding-left: 10px;
       }
+      p {
+        flex: 1;
+      }
+      button {
+        padding: 0.1rem 0.2rem;
+        background-color: transparent;
+        border: 1px solid #666;
+        font-size: 0.12rem;
+        border-radius: 30px;
+        .van-icon {
+          margin-right: 4px;
+          color: #fff !important;
+        }
+      }
     }
     .song-list {
       overflow: auto;
@@ -760,6 +895,89 @@ export default {
           flex: 1;
           padding-right: 10px;
         }
+      }
+    }
+    &.more-popup {
+      .icon-svg {
+        width: 20px;
+        height: 20px;
+      }
+      .cell-list {
+        display: flex;
+        li {
+          margin-left: 20px;
+          i {
+            display: block;
+            width: 20px;
+            height: 20px;
+            margin: 0 auto 4px;
+            padding: 10px;
+            background-color: #444;
+            border-radius: 50%;
+          }
+        }
+      }
+      .progress-warp {
+        display: flex;
+        width: 88%;
+        margin: 20px auto;
+        .progress {
+          width: 75%;
+          margin: auto;
+          /deep/.van-slider {
+            background-color: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            .van-slider__button {
+              box-sizing: border-box;
+              width: 16px;
+              height: 16px;
+              border: 3px solid #fff;
+              border-radius: 50%;
+            }
+          }
+        }
+        span {
+          width: 45px;
+          font-size: 12px;
+          &.time {
+            text-align: right;
+          }
+        }
+      }
+    }
+    .favorite-list {
+      overflow: auto;
+      height: 90%;
+      padding: 0 20px;
+      li {
+        margin-top: 10px;
+        img {
+          width: 1rem;
+          height: 1rem;
+          margin-right: 10px;
+          vertical-align: middle;
+          border-radius: 3px;
+        }
+        .right-part {
+          display: inline-block;
+          vertical-align: middle;
+          span {
+            font-size: 0.12rem;
+            color: #999;
+          }
+        }
+      }
+    }
+    .van-field {
+      width: 90%;
+      margin: auto;
+      padding: 0;
+      background-color: transparent;
+      /deep/.van-field__control {
+        color: #fff;
+      }
+      /deep/.van-icon {
+        color: #c8c9cc !important;
       }
     }
     .close-list {

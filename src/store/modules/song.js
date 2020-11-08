@@ -68,7 +68,7 @@ export default {
 
       //播放歌曲时，若该歌曲已标记了喜欢
       findIndex(
-        JSON.parse(localStorage.getItem('likeSongList')),
+        JSON.parse(localStorage.getItem('likeSongList')) || [],
         state.songInfo
       ) !== -1 && (state.songInfo.likeFlag = true);
     },

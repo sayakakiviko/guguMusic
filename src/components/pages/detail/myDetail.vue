@@ -4,10 +4,14 @@
 <template>
   <div class="my-detail">
     <van-icon name="arrow-left" size="0.4rem" v-back />
-    <!--我喜欢的-->
-    <div class="like" v-if="$route.query.type === 'like'">
+    <!--我喜欢的&最近播放-->
+    <div
+      class="like"
+      :class="{ history: type === 'history' }"
+      v-if="type === 'like' || type === 'history'"
+    >
       <ul>
-        <li v-for="(item, index) in likeList" :key="index">
+        <li v-for="(item, index) in songList" :key="index">
           <span class="order">{{ index + 1 }}</span>
           <div class="con">
             <!--歌名-->
@@ -32,8 +36,10 @@
         </li>
       </ul>
     </div>
+    <!--自建歌单-->
+    <div class="custom" v-else-if="type === 'custom'"></div>
     <!--主题换肤-->
-    <div class="skin" v-if="$route.query.type === 'skin'">
+    <div class="skin" v-else-if="type === 'skin'">
       <h3>官方推荐</h3>
       <ul>
         <li
@@ -51,12 +57,13 @@
 </template>
 
 <script>
-import commonDetail from '@/components/ui/commonDetail';
+// import commonDetail from '@/components/ui/commonDetail';
 export default {
   // components: { commonDetail },
   data() {
     return {
-      likeList: [], //喜欢列表
+      type: this.$route.query.type, //需要显示的页面
+      songList: [], //喜欢&最近播放列表
       active: 0, //使用的主题
       //主题列表
       theme: [
@@ -72,7 +79,7 @@ export default {
     };
   },
   created() {
-    this.likeList = JSON.parse(localStorage.getItem('likeSongList'));
+    this.songList = JSON.parse(localStorage.getItem(this.type + 'SongList'));
   },
   methods: {
     /**
@@ -98,9 +105,12 @@ export default {
   min-height: 100%;
   padding-top: 0.85rem;
   background-color: #222;
-  .like {
+  .like,
+  .history,
+  .custom,
+  .skin {
     &:before {
-      content: '我喜欢的';
+      content: '';
       position: absolute;
       left: 0;
       right: 0;
@@ -109,6 +119,14 @@ export default {
       text-align: center;
       font-size: 0.38rem;
       color: #fff;
+    }
+  }
+  .like {
+    &:before {
+      content: '我喜欢的';
+    }
+    &.history:before {
+      content: '最近播放';
     }
     ul {
       padding: 0 20px 20px;
@@ -157,17 +175,14 @@ export default {
       }
     }
   }
+  .custom {
+    &:before {
+      content: '自建歌单';
+    }
+  }
   .skin {
     &:before {
       content: '主题换肤';
-      position: absolute;
-      left: 0;
-      right: 0;
-      top: 0.16rem;
-      margin: auto;
-      text-align: center;
-      font-size: 0.38rem;
-      color: #fff;
     }
     h3 {
       margin: 0 0 0.25rem 0.25rem;

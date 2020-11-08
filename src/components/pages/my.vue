@@ -9,8 +9,12 @@
       <li v-jump="['myDetail', { type: 'like' }]">
         <icon-svg class="icon-svg" name="icon-like-fill"></icon-svg>我喜欢的
       </li>
-      <li><icon-svg class="icon-svg" name="icon-time"></icon-svg>最近播放</li>
-      <li><icon-svg class="icon-svg" name="icon-user"></icon-svg>自建歌单</li>
+      <li v-jump="['myDetail', { type: 'history' }]">
+        <icon-svg class="icon-svg" name="icon-time"></icon-svg>最近播放
+      </li>
+      <li v-jump="['myDetail', { type: 'custom' }]">
+        <icon-svg class="icon-svg" name="icon-user"></icon-svg>自建歌单
+      </li>
       <li v-jump="['myDetail', { type: 'skin' }]">
         <icon-svg class="icon-svg" name="icon-skin"></icon-svg>主题换肤
       </li>
