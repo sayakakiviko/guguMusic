@@ -10,7 +10,7 @@
       :disabled="disabled"
       :class="{ 'search-run': searchRun }"
       shape="round"
-      background="#222"
+      :background="($store.state.themeSkin && '#fff') || '#222'"
       placeholder="请输入搜索关键词"
       @focus="onFocus"
       @input="onInput"
@@ -405,7 +405,6 @@ export default {
       display: inline-block;
       margin: 0 10px 10px 0;
       padding: 5px 10px;
-      background-color: #333;
       border-radius: 0.5rem;
     }
   }

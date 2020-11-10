@@ -12,7 +12,8 @@ export default {
     modeIndex: 0, //播放模式的下标。0顺序播放、1单曲循环、2随机播放
     currentIndex: -1, //当前播放歌曲位于播放列表的位置
     songIndex: -1, //当前播放歌曲位于歌曲列表的位置
-    rankScrollTop: 0 //榜单详情滚动距离
+    rankScrollTop: 0, //榜单详情滚动距离
+    themeSkin: 0 //选择的主题皮肤
   },
   mutations: {
     //设置播放页层级
@@ -79,6 +80,10 @@ export default {
     //榜单详情滚动距离
     SET_RANKSCROLLTOP(state, rankScrollTop) {
       state.rankScrollTop = rankScrollTop;
+    },
+    //设置主题皮肤
+    SET_THEMESKIN(state, themeSkin) {
+      state.themeSkin = themeSkin;
     }
   },
   actions: {
@@ -89,7 +94,7 @@ export default {
      * @isFilter {boolean} 列表是否需要过滤
      * */
     selectPlay({ commit, state }, { list, index, isFilter }) {
-      if (state.songInfo.songId === list[index].songId) return; //同一首歌无需重播
+      if (state.playing && state.songInfo.songId === list[index].songId) return; //处于播放状态时，同一首歌无需重播
       let songIndex = -1;
       commit('SET_SONGLIST', list); //歌曲列表
       if (state.modeIndex === 2) {

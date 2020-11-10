@@ -102,8 +102,6 @@ export default {
     };
   },
   mounted() {
-    // console.log(this.page.clientHeight);
-    // console.log(document.getElementsByClassName('singer-img')[0].clientHeight);
     window.addEventListener('scroll', this.getScrollTop); //监听滚动事件
     this.page.topHigh =
       (this.page.topHigh *

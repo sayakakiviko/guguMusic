@@ -78,7 +78,7 @@
         <div class="bottom">
           <!--喜欢&更多-->
           <div class="option">
-            <i @click="likeSong"
+            <i @click="clickLike(false)"
               ><icon-svg
                 class="icon-svg"
                 :name="(songInfo.likeFlag && 'icon-like-fill') || 'icon-like'"
@@ -296,18 +296,25 @@
         <button @click="showSheet"><van-icon name="plus" />新建歌单</button>
       </div>
       <ul class="favorite-list">
-        <li>
+        <li @click="clickLike(true)">
           <img src="../../assets/images/logo.gif" class="logo" />
           <div class="right-part">
             <p>我喜欢的音乐</p>
-            <span>3首</span>
+            <span>{{ likeSongList.length }}首</span>
           </div>
         </li>
-        <li>
-          <img src="../../assets/images/logo.gif" class="logo" />
+        <li
+          v-for="(item, index) in songSheetList"
+          :key="index"
+          @click="addToSheet(index)"
+        >
+          <img
+            :src="item.photo || require('@/assets/images/logo.gif')"
+            class="logo"
+          />
           <div class="right-part">
-            <p>我喜欢的音乐</p>
-            <span>3首</span>
+            <p>{{ item.name }}</p>
+            <span>{{ item.count }}首</span>
           </div>
         </li>
       </ul>
@@ -378,9 +385,19 @@ export default {
       isShowFavorite: false, //是否显示歌单弹窗
       isShowSheet: false, //是否显示新建歌单弹窗
       sheetName: '', //歌单标题
+      likeSongList: [], //我喜欢的歌曲列表
+      songSheetList: [], //歌单列表
       rate: 0, //进度条百分比
       volume: 80 //音量
     };
+  },
+  created() {
+    this.likeSongList = JSON.parse(localStorage.getItem('likeSongList')) || []; //我喜欢的
+    //歌单列表
+    this.songSheetList =
+      JSON.parse(localStorage.getItem('songSheetList')) || [];
+
+    this.sheetName = '歌单' + (this.songSheetList.length + 1); //默认的新建歌单名
   },
   computed: mapState([
     'playerLevel',
@@ -423,7 +440,7 @@ export default {
         //将歌曲存入历史播放列表
         let historySong =
           JSON.parse(localStorage.getItem('historySongList')) || [];
-        historySong.push(this.songInfo);
+        historySong.unshift(this.songInfo);
         historySong = this.$removal(historySong, 'songId'); //依据songId去重
         historySong.length > 100 && historySong.pop(); //最多100条记录
         localStorage.setItem('historySongList', JSON.stringify(historySong));
@@ -547,21 +564,38 @@ export default {
       //若文字溢出
       e.target.scrollWidth - e.target.clientWidth > 0 && Toast(...name);
     },
-    /** 喜欢歌曲 */
-    likeSong() {
-      this.songInfo.likeFlag = !this.songInfo.likeFlag;
+    /**
+     * 喜欢歌曲
+     * @bool {boolean} 是否是点的收藏进歌单
+     * */
+    clickLike(bool) {
+      let list = this.likeSongList,
+        index = this.findIndex(list);
 
-      let likeList = JSON.parse(localStorage.getItem('likeSongList')) || []; //喜欢列表
+      //点击歌单列表的收藏
+      if (bool) {
+        for (let i = 0, length = list.length; i < length; i++) {
+          if (index !== -1) {
+            Toast('歌曲已存在');
+            return;
+          }
+        }
+      }
+
+      this.songInfo.likeFlag = !this.songInfo.likeFlag;
       if (this.songInfo.likeFlag) {
         //喜欢
         this.songInfo.likeFlag = true;
-        likeList.push(this.songInfo);
+        this.likeSongList.push(this.songInfo);
       } else {
         //取消喜欢
         this.songInfo.likeFlag = false;
-        likeList.splice(this.findIndex(likeList), 1);
+        this.likeSongList.splice(index, 1);
       }
-      localStorage.setItem('likeSongList', JSON.stringify(likeList));
+      localStorage.setItem('likeSongList', JSON.stringify(this.likeSongList));
+      Toast((this.songInfo.likeFlag && '已收藏') || '已取消收藏');
+
+      bool && (this.isShowFavorite = false);
     },
     /** 更换播放模式 */
     changMode() {
@@ -712,13 +746,51 @@ export default {
     volumeChange(val) {
       this.$refs.audio.volume = val / 100;
     },
+    /**
+     * 添加进哪个歌单
+     * @index {number} 歌单下标
+     */
+    addToSheet(index) {
+      let list = this.songSheetList;
+      if (this.findIndex(list[index].songList) !== -1) {
+        Toast('歌曲已存在');
+        return;
+      }
+
+      //添加进歌单
+      list[index].count++;
+      list[index].photo = this.songInfo.picM;
+      list[index].songList.push(this.songInfo);
+      localStorage.setItem('songSheetList', JSON.stringify(list));
+      Toast('已收藏进歌单');
+    },
     /** 开始新建歌单 */
     showSheet() {
       this.isShowFavorite = false;
       this.isShowSheet = true;
+      this.sheetName = '歌单' + (this.songSheetList.length + 1); //默认的新建歌单名
     },
     /** 完成新建歌单 */
     finishSheet() {
+      if (!this.sheetName) return;
+      let list = this.songSheetList;
+
+      for (let i = 0, length = list.length; i < length; i++) {
+        if (this.sheetName === list[i].name) {
+          Toast('歌单名不允许重复');
+          return;
+        }
+      }
+
+      list.push({
+        id: length + 1,
+        name: this.sheetName, //歌单名
+        photo: this.songInfo.picM, //图片
+        count: 1, //歌单曲目数量
+        songList: [this.songInfo] //歌单歌曲列表
+      });
+      localStorage.setItem('songSheetList', JSON.stringify(list));
+      Toast('已收藏进歌单');
       this.isShowSheet = false;
     },
     /**
@@ -819,6 +891,7 @@ export default {
     /**
      * 找到歌曲位于列表中的位置
      * @list {array} 歌曲列表
+     * @return 歌曲位于列表的下标
      */
     findIndex(list) {
       return list.findIndex(item => item.songId === this.songInfo.songId);
@@ -848,7 +921,7 @@ export default {
       &.icon-svg__icon-delete {
         width: 22px;
         height: 22px;
-        color: #666;
+        color: #666 !important;
       }
     }
     .header {
@@ -871,7 +944,6 @@ export default {
         border-radius: 30px;
         .van-icon {
           margin-right: 4px;
-          color: #fff !important;
         }
       }
     }
@@ -973,9 +1045,6 @@ export default {
       margin: auto;
       padding: 0;
       background-color: transparent;
-      /deep/.van-field__control {
-        color: #fff;
-      }
       /deep/.van-icon {
         color: #c8c9cc !important;
       }
@@ -1065,7 +1134,7 @@ export default {
           }
         }
         &.warp {
-          overflow: scroll;
+          overflow-y: scroll;
           opacity: 0;
           //position: static;
           height: 90%;

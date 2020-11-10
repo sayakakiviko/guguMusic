@@ -34,8 +34,14 @@
     .van-popup {
       background-color: @themeBgSub;
       color: @fontColorSub;
+      .header button .van-icon{
+        color: @fontColorSub
+      }
       .song-list li.active{
         color: @themeColor;
+      }
+      .van-field .van-field__control{
+        color: @fontColorSub
       }
     }
     .progress-warp{
@@ -203,6 +209,54 @@
     }
   }
 
+  //我的-详情页
+  .my-detail{
+    background-color: @themeBg;
+    .like,
+    .history,
+    .custom,
+    .skin {
+      &:before{
+        color: @fontColorSub;
+      }
+    }
+    .like{
+      .order{
+        color: @themeColor;
+      }
+      h3{
+        color: @fontColorSub;
+      }
+    }
+    .sheet-list li{
+      .right-part p{
+        color: @fontColorSub;
+      }
+      .van-icon{
+        color: @fontColor;
+      }
+    }
+    .skin{
+      h3,li p{
+        color: @fontColorSub;
+      }
+    }
+    .van-popup{
+      background-color: @themeBg;
+      h2{
+        color: @fontColorSub;
+      }
+      li{
+        .order{
+          color: @themeColor;
+        }
+        .con h3{
+            color: @fontColorSub;
+          }
+      }
+    }
+  }
+
   //搜索
   .search{
     background-color: @themeBg;
@@ -221,6 +275,9 @@
     .hot-key,
     .history{
       color: @fontColor;
+      li{
+        background-color: @themeBgSub;
+      }
     }
     .history .clear .icon-svg{
       color: @fontColorDn;
@@ -229,9 +286,13 @@
       color: @fontColorSub;
       p{
         color: @themeColor;
+        border-bottom-color: @themeBgSub;
       }
-      li i{
-        color: @fontColor;
+      li {
+        border-bottom-color: @themeBgSub;
+        i{
+          color: @fontColor;
+        }
       }
     }
     .result .cell{
@@ -240,6 +301,7 @@
         color: @fontColorDn;
       }
       .right-part{
+        border-bottom-color: @themeBgSub;
         h4{
           color: #b9b9b9;
         }
@@ -273,10 +335,7 @@
     }
   }
 
-  .van-icon {
-    color: @themeColor;
-  }
-  .icon-svg{
+  .van-icon,.icon-svg {
     color: @themeColor;
   }
 }

@@ -6,6 +6,7 @@ import Vue from 'vue';
  * 数组or数组对象去重
  * @arr {Array} 需要去重的数组对象
  * @key {String} 需要去重的数组对象依据的key
+ * @return 去重后的数组
  * */
 Vue.prototype.$removal = function(arr, key) {
   let res = [], // 改造后输出的数组
