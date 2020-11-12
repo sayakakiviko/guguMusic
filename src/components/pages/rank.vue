@@ -299,7 +299,6 @@ export default {
         }
       }
       .van-icon {
-        margin-left: 0.1rem;
         vertical-align: middle;
       }
     }

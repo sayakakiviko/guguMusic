@@ -59,7 +59,7 @@ export default {
     }
     .tit {
       display: inline-block;
-      font-size: 0.24rem;
+      font-size: 0.28rem;
     }
     .search.icon-svg {
       position: absolute;

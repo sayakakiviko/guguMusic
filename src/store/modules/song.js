@@ -57,11 +57,10 @@ export default {
     //当前播放歌曲位于播放列表的下标
     SET_CURRENTINDEX(state, currentIndex) {
       state.currentIndex = currentIndex;
-      state.songInfo = state.playList[currentIndex]; //获取到是列表里的哪首歌
+      currentIndex > -1 && (state.songInfo = state.playList[currentIndex]); //获取到是列表里的哪首歌
 
       //非清空，且播放的是搜索列表播放的歌曲
-      if (currentIndex > -1 && typeof state.songInfo.singerName === 'string') {
-        state.songInfo.singerName = state.songInfo.singerName.split(',');
+      if (currentIndex > -1 && state.songInfo.mp3) {
         state.songInfo.picM = state.songInfo.cover;
         state.songInfo.listenUrl = state.songInfo.mp3;
         state.songInfo.songId = state.songInfo.copyrightId;

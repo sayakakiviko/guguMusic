@@ -139,7 +139,7 @@ export default {
   h3 {
     margin-top: 0.1rem;
     text-align: center;
-    font-size: 0.16rem;
+    font-size: 14px;
     line-height: 2;
   }
   /deep/.van-loading__text {

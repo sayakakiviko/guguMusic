@@ -45,7 +45,7 @@ body {
   overflow-x: hidden;
   height: 100%;
   width: 100%;
-  font-size: 0.16rem;
+  font-size: 14px;
   .van-icon-arrow-left {
     position: fixed;
     left: 0.2rem;

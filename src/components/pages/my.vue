@@ -30,15 +30,18 @@
 
 <script>
 import { Dialog } from 'vant';
+import { mapActions } from 'vuex';
 
 export default {
   methods: {
+    ...mapActions(['clearList']),
     /** 退出登录  */
     loginOut() {
       Dialog.confirm({
         message: '确定退出登录？'
       })
         .then(() => {
+          this.clearList();
           localStorage.removeItem('isLogin');
           this.$router.replace('/login');
         })

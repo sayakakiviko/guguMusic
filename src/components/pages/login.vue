@@ -35,6 +35,14 @@ export default {
       pwd: '' //密码
     };
   },
+  mounted() {
+    let vm = this;
+    document.documentElement.addEventListener('keydown', function(e) {
+      e = e || window.event;
+      let keycode = e.which || e.keyCode;
+      keycode === 13 && vm.login();
+    });
+  },
   methods: {
     /** 登录 */
     login() {

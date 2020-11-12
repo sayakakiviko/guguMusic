@@ -54,7 +54,7 @@
                   {{ item.songName }}
                 </h4>
                 <p>
-                  {{ item.singerName }}
+                  {{ item.artist }}
                 </p>
                 <icon-svg class="icon-svg" name="icon-more"></icon-svg>
               </div>
@@ -279,14 +279,21 @@ export default {
         .then(res => {
           this.pageNum[active] = page;
 
+          //歌曲列表的处理
+          if (!active) {
+            res.musics.forEach(song => {
+              song.singerName = song.singerName.split(','); //歌手从字符串改为数组
+            });
+          }
+
           //loadMore时为push，否则直接赋值
           (page > 1 && this.result[listType].push(...res[listType])) ||
             (this.result[listType] = res[listType]);
 
+          //数据全部加载完毕
           this.result[listType].length >= res.pgt &&
-            (this.finished[active] = true); //数据全部加载完毕
+            (this.finished[active] = true);
 
-          !active && this.SET_PLAYLIST(this.result[listType]); //歌曲列表要把歌曲存入vuex
           //将搜索词存入本地历史记录
           if (page === 1) {
             this.showResult = true;
@@ -350,9 +357,13 @@ export default {
         return;
       }
       let isFilter = false; //搜索的歌曲需要过滤
+      let list = JSON.parse(JSON.stringify(this.result.musics));
+      // list.forEach(song => {
+      //   song.singerName = song.singerName.split(','); //歌手从字符串改为数组
+      // });
       //播放歌曲
       this.selectPlay({
-        list: JSON.parse(JSON.stringify(this.result.musics)),
+        list: list,
         index,
         isFilter
       });
@@ -382,6 +393,9 @@ export default {
     width: 100%;
     .van-icon.van-icon-search {
       font-size: 22px;
+    }
+    .van-search__action:active {
+      background-color: transparent;
     }
   }
   .search-run {
@@ -438,10 +452,6 @@ export default {
   .result {
     /deep/.van-tabs--line .van-tabs__wrap {
       height: 0.5rem;
-      .van-tab {
-        line-height: 0.5rem;
-        font-size: 0.16rem;
-      }
       .van-tabs__content {
         padding: 0 0.25rem;
       }

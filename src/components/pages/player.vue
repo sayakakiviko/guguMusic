@@ -38,7 +38,7 @@
               <img
                 class="rotate"
                 :class="{ paused: !playing }"
-                :src="songInfo.picM"
+                :src="songInfo.picM || require('@/assets/images/logo.gif')"
               />
             </div>
             <div class="lyric cd-lyric">
@@ -147,7 +147,7 @@
     <!--迷你播放器-->
     <div
       class="mini-player"
-      :class="{ show: !fullScreen && songState.miniShow }"
+      :class="{ show: !fullScreen && songState.miniShow && songInfo.listenUrl }"
       @click="showPlayer"
     >
       <div class="mini-disc">
@@ -940,9 +940,11 @@ export default {
         padding: 0.1rem 0.2rem;
         background-color: transparent;
         border: 1px solid #666;
-        font-size: 0.12rem;
+        font-size: 14px;
         border-radius: 30px;
         .van-icon {
+          position: relative;
+          top: 2px;
           margin-right: 4px;
         }
       }
@@ -1034,7 +1036,7 @@ export default {
           display: inline-block;
           vertical-align: middle;
           span {
-            font-size: 0.12rem;
+            font-size: 14px;
             color: #999;
           }
         }
