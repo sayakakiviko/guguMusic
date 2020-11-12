@@ -17,6 +17,14 @@ export default [
     }
   },
   {
+    path: '/login',
+    name: 'login',
+    desc: '登录',
+    components: {
+      default: getPage('login')
+    }
+  },
+  {
     path: '/singer',
     name: 'singer',
     desc: '歌手',

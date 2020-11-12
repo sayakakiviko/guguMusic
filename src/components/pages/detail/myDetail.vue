@@ -10,7 +10,7 @@
       :class="{ history: type === 'history' }"
       v-if="type === 'like' || type === 'history'"
     >
-      <ul>
+      <ul v-if="songList.length">
         <li
           v-for="(item, index) in songList"
           :key="index"
@@ -39,10 +39,11 @@
           </div>
         </li>
       </ul>
+      <van-empty image="error" description="暂无数据" v-else />
     </div>
     <!--自建歌单-->
     <div class="custom" v-else-if="type === 'custom'">
-      <ul class="sheet-list">
+      <ul class="sheet-list" v-if="songSheetList.length">
         <li
           v-for="(item, index) in songSheetList"
           :key="index"
@@ -59,11 +60,12 @@
           <van-icon name="arrow" />
         </li>
       </ul>
+      <van-empty image="error" description="暂无数据" v-else />
       <!--歌单-->
       <van-popup v-model="show" position="right" :style="{ height: '100%' }">
         <van-icon name="arrow-left" size="0.4rem" @click="show = false" />
         <h2>{{ sheetName }}</h2>
-        <ul>
+        <ul v-if="songList.length">
           <li
             v-for="(item, index) in songList"
             :key="index"
@@ -92,6 +94,7 @@
             </div>
           </li>
         </ul>
+        <van-empty image="error" description="暂无数据" v-else />
       </van-popup>
     </div>
     <!--主题换肤-->
@@ -136,7 +139,8 @@ export default {
     };
   },
   created() {
-    this.songList = JSON.parse(localStorage.getItem(this.type + 'SongList')); //喜欢&最近播放列表
+    this.songList =
+      JSON.parse(localStorage.getItem(this.type + 'SongList')) || []; //喜欢&最近播放列表
 
     //歌单列表
     this.songSheetList =

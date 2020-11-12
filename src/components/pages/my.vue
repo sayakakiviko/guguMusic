@@ -32,10 +32,6 @@
 import { Dialog } from 'vant';
 
 export default {
-  data() {
-    return {};
-  },
-  created() {},
   methods: {
     /** 退出登录  */
     loginOut() {
@@ -43,7 +39,8 @@ export default {
         message: '确定退出登录？'
       })
         .then(() => {
-          //
+          localStorage.removeItem('isLogin');
+          this.$router.replace('/login');
         })
         .catch(() => {
           // on cancel

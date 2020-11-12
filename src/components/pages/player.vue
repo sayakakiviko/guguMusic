@@ -984,7 +984,7 @@ export default {
             height: 20px;
             margin: 0 auto 4px;
             padding: 10px;
-            background-color: #444;
+            background-color: rgba(68, 68, 68, 0.3);
             border-radius: 50%;
           }
         }

@@ -25,18 +25,17 @@
       >
         <div
           class="cell van-clearfix"
-          v-for="item in newSongList"
-          :key="item.contentId"
+          v-for="(item, index) in newSongList"
+          :key="index"
+          @click="selectSong(index)"
         >
-          <img :src="item.songData.picM" />
+          <img :src="item.picM" />
           <div class="con fl">
-            <p class="no-wrap">{{ item.songData.songName }}</p>
+            <p class="no-wrap">{{ item.songName }}</p>
             <p class="no-wrap name">
-              <span
-                v-for="(name, index) in item.songData.singerName"
-                :key="index"
-                >{{ name }}</span
-              >
+              <span v-for="(name, index) in item.singerName" :key="index">{{
+                name
+              }}</span>
             </p>
           </div>
         </div>
@@ -49,6 +48,7 @@
 </template>
 
 <script>
+import { mapActions } from 'vuex';
 export default {
   data() {
     return {
@@ -66,6 +66,7 @@ export default {
     this.getNewSong(0);
   },
   methods: {
+    ...mapActions(['selectPlay']),
     /**
      * 获取轮播图列表
      */
@@ -82,7 +83,9 @@ export default {
       this.$api['home/getNewSongList']({
         pageNo: pageNum
       }).then(res => {
-        this.newSongList.push(...res.results);
+        res.results.forEach(item => {
+          this.newSongList.push(item.songData);
+        });
         this.newSongList.length >= res.totalCount && (this.finished = true); //数据全部加载完毕
       });
     },
@@ -103,6 +106,19 @@ export default {
       this.isLoading = false;
       this.getBanner();
       this.getNewSong(0);
+    },
+    /**
+     * 点击播放歌曲
+     * @index {number} 歌曲在列表的下标
+     */
+    selectSong(index) {
+      let isFilter = false; //过滤后的列表，无需再次过滤
+      //播放歌曲
+      this.selectPlay({
+        list: JSON.parse(JSON.stringify(this.newSongList)),
+        index,
+        isFilter
+      });
     }
   }
 };

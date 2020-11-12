@@ -11,6 +11,7 @@ import {
   CellGroup,
   Circle,
   Divider,
+  Empty,
   Field,
   IndexBar,
   IndexAnchor,
@@ -31,6 +32,7 @@ Vue.use(Cell);
 Vue.use(CellGroup);
 Vue.use(Circle);
 Vue.use(Divider);
+Vue.use(Empty);
 Vue.use(Field);
 Vue.use(IndexBar);
 Vue.use(IndexAnchor);

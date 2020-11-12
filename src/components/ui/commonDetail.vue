@@ -13,8 +13,9 @@
       class="singer-img"
       :class="{ sticky: isSticky }"
       :style="{ backgroundImage: `url('${avatar}')` }"
+      @click="showInfo"
     >
-      <p v-backTop>{{ singerDetail.artistName || albumFlag }}</p>
+      <p v-backTop @click.stop>{{ singerDetail.artistName || albumFlag }}</p>
     </div>
     <!--歌曲列表-->
     <div class="song-list" :class="{ sticky: isSticky }" v-if="songList.length">
@@ -50,7 +51,10 @@
     <!--歌手详情-->
     <div
       class="info"
-      :style="{ top: infoShow ? `${page.scrollHeight}px` : '-100vh' }"
+      :style="[
+        { top: infoShow ? `${page.scrollHeight}px` : '-100vh' },
+        { opacity: (infoShow && 1) || 0 }
+      ]"
       @touchmove.prevent
     >
       <img :src="avatar" />
@@ -250,11 +254,12 @@ export default {
       position: absolute;
       left: 0;
       right: 0;
-      bottom: 0.26rem;
+      bottom: 0;
       width: 80%;
       margin: auto;
       text-align: center;
       font-size: 0.28rem;
+      line-height: 0.86rem;
       font-weight: bold;
       color: #fff;
     }

@@ -38,6 +38,7 @@ export default {
   }
 };
 </script>
+
 <style lang="less">
 html,
 body {
@@ -63,5 +64,8 @@ body {
   .pt50 {
     padding-bottom: 50px;
   }
+}
+::-webkit-scrollbar {
+  display: none;
 }
 </style>

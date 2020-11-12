@@ -70,10 +70,10 @@ export default {
     }
   }
   /deep/.van-tabs--line .van-tabs__wrap {
-    height: 0.5rem;
+    height: 0.8rem;
     .van-tab {
-      line-height: 0.5rem;
-      font-size: 0.16rem;
+      line-height: 0.8rem;
+      font-size: 14px;
     }
   }
 }
