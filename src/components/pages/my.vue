@@ -19,7 +19,7 @@
         <icon-svg class="icon-svg" name="icon-skin"></icon-svg>主题换肤
       </li>
     </ul>
-    <button @click="loginOut">退出登录</button>
+    <button class="exit" @click="loginOut">退出登录</button>
 
     <!--详情-->
     <transition name="van-slide-right">
@@ -84,7 +84,7 @@ export default {
       }
     }
   }
-  button {
+  .exit {
     display: block;
     width: 7rem;
     height: 40px;

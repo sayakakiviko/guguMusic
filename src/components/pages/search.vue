@@ -27,6 +27,7 @@
       <van-tabs
         v-model="active"
         sticky
+        swipeable
         :offset-top="54"
         line-height="1px"
         :before-change="beforeChange"

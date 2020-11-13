@@ -43,57 +43,71 @@
     </div>
     <!--自建歌单-->
     <div class="custom" v-else-if="type === 'custom'">
-      <ul class="sheet-list" v-if="songSheetList.length">
-        <li
-          v-for="(item, index) in songSheetList"
-          :key="index"
-          @click="clickSheet(item)"
-        >
-          <img
-            :src="item.photo || require('@/assets/images/logo.gif')"
-            class="logo"
-          />
-          <div class="right-part">
-            <p>{{ item.name }}</p>
-            <span>{{ item.count }}首</span>
+      <div class="sheet-list" v-if="songSheetList.length">
+        <van-swipe-cell v-for="(item, index) in songSheetList" :key="index">
+          <div class="sheet-cell" @click="clickSheet(item, index)">
+            <img
+              :src="item.photo || require('@/assets/images/logo.gif')"
+              class="logo"
+            />
+            <div class="right-part">
+              <p>{{ item.name }}</p>
+              <span>{{ item.count }}首</span>
+            </div>
+            <van-icon name="arrow" />
           </div>
-          <van-icon name="arrow" />
-        </li>
-      </ul>
+          <template #right>
+            <van-button
+              square
+              text="删除"
+              type="danger"
+              class="delete-button"
+              @click="delSheet(index)"
+            />
+          </template>
+        </van-swipe-cell>
+      </div>
       <van-empty image="error" description="暂无数据" v-else />
-      <!--歌单-->
+      <!--歌单歌曲-->
       <van-popup v-model="show" position="right" :style="{ height: '100%' }">
         <van-icon name="arrow-left" size="0.4rem" @click="show = false" />
         <h2>{{ sheetName }}</h2>
-        <ul v-if="songList.length">
-          <li
-            v-for="(item, index) in songList"
-            :key="index"
-            @click="selectSong(index)"
-          >
-            <span class="order">{{ index + 1 }}</span>
-            <div class="con">
-              <!--歌名-->
-              <h3>
-                <label
-                  class="van-ellipsis"
-                  :style="{ maxWidth: (item.songName && '5rem') || '4rem' }"
-                  >{{ item.songName }}</label
-                >
-                <img
-                  :src="require('@/assets/images/rank/SQ.png')"
-                  v-if="item.hasSQqq"
-                />
-              </h3>
-              <!--歌手-->
-              <p class="van-ellipsis">
-                <span v-for="(name, i) in item.singerName" :key="i"
-                  >{{ (i && ',') || '' }}{{ name }}</span
-                >
-              </p>
+        <div v-if="songList.length">
+          <van-swipe-cell v-for="(item, index) in songList" :key="index">
+            <div class="sheet-song-cell" @click="selectSong(index)">
+              <span class="order">{{ index + 1 }}</span>
+              <div class="con">
+                <!--歌名-->
+                <h3>
+                  <label
+                    class="van-ellipsis"
+                    :style="{ maxWidth: (item.songName && '5rem') || '4rem' }"
+                    >{{ item.songName }}</label
+                  >
+                  <img
+                    :src="require('@/assets/images/rank/SQ.png')"
+                    v-if="item.hasSQqq"
+                  />
+                </h3>
+                <!--歌手-->
+                <p class="van-ellipsis">
+                  <span v-for="(name, i) in item.singerName" :key="i"
+                    >{{ (i && ',') || '' }}{{ name }}</span
+                  >
+                </p>
+              </div>
             </div>
-          </li>
-        </ul>
+            <template #right>
+              <van-button
+                square
+                text="删除"
+                type="danger"
+                class="delete-button"
+                @click="delSheetSong(index)"
+              />
+            </template>
+          </van-swipe-cell>
+        </div>
         <van-empty image="error" description="暂无数据" v-else />
       </van-popup>
     </div>
@@ -117,6 +131,7 @@
 
 <script>
 import { mapActions } from 'vuex';
+import { Dialog } from 'vant';
 export default {
   data() {
     return {
@@ -124,6 +139,7 @@ export default {
       show: false, //歌单弹窗是否显示
       songList: [], //喜欢&最近播放列表
       songSheetList: [], //歌单列表
+      sheetIndex: 0, //歌单下标
       sheetName: '', //歌单名
       //主题列表
       theme: [
@@ -159,11 +175,53 @@ export default {
     /**
      * 点击歌单
      * @item {object} 歌单对象
+     * @index {number} 歌单下标
      */
-    clickSheet(item) {
+    clickSheet(item, index) {
+      this.sheetIndex = index;
       this.songList = item.songList;
       this.sheetName = item.name;
       this.show = true;
+    },
+    /**
+     * 删除歌单
+     * @index {number} 要删除歌单的下标
+     */
+    delSheet(index) {
+      Dialog.confirm({
+        message: '确定删除该歌单？'
+      })
+        .then(() => {
+          this.songSheetList.splice(index, 1);
+          localStorage.setItem(
+            'songSheetList',
+            JSON.stringify(this.songSheetList)
+          );
+        })
+        .catch(() => {
+          // on cancel
+        });
+    },
+    /**
+     * 删除歌单歌曲
+     * @index {number} 要删除歌曲的下标
+     */
+    delSheetSong(index) {
+      Dialog.confirm({
+        message: '确定删除该歌曲？'
+      })
+        .then(() => {
+          this.songList.splice(index, 1);
+          this.songSheetList[this.sheetIndex].songList.splice(index, 1);
+          this.songSheetList[this.sheetIndex].count--;
+          localStorage.setItem(
+            'songSheetList',
+            JSON.stringify(this.songSheetList)
+          );
+        })
+        .catch(() => {
+          // on cancel
+        });
     },
     /**
      * 点击播放歌曲
@@ -255,7 +313,7 @@ export default {
     &:before {
       content: '自建歌单';
     }
-    .sheet-list li {
+    .sheet-list .sheet-cell {
       position: relative;
       margin-top: 15px;
       img {
@@ -337,12 +395,16 @@ export default {
     box-sizing: border-box;
     width: 100%;
     padding: 0 0.28rem;
+    .van-button {
+      height: 100%;
+    }
     h2 {
       text-align: center;
       font-size: 0.38rem;
       line-height: 0.85rem;
     }
-    li {
+    li,
+    .sheet-song-cell {
       display: flex;
       align-items: center;
       height: 64px;

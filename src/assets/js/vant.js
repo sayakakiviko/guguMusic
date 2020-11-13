@@ -22,6 +22,7 @@ import {
   Popup,
   Swipe,
   SwipeItem,
+  SwipeCell,
   Slider,
   Search,
   Tab,
@@ -43,6 +44,7 @@ Vue.use(PullRefresh);
 Vue.use(Popup);
 Vue.use(Swipe);
 Vue.use(SwipeItem);
+Vue.use(SwipeCell);
 Vue.use(Slider);
 Vue.use(Search);
 Vue.use(Tab);
