@@ -74,33 +74,18 @@ export default {
   z-index: 10;
   width: 100%;
   min-height: 100vh;
-  background-color: #222;
   h2 {
     text-align: center;
     font-size: 18px;
     line-height: 50px;
-    color: #fff;
   }
-  .van-cell {
-    background-color: #222;
-    &::after {
-      border-color: #999;
-    }
-    &:last-child::after {
-      display: block;
-    }
-    /deep/.van-icon-clear {
-      color: #666 !important;
-    }
-    /deep/.van-field__control {
-      color: #ddd;
-    }
+  .van-cell:last-child::after {
+    display: block;
   }
   button {
     display: block;
     width: 92%;
     margin: 20px auto;
-    background-color: #ffcd32;
     border: none;
   }
 }

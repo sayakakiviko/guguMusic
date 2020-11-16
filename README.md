@@ -1,4 +1,4 @@
-## 含elementUI的vue2.5框架
+## 含vantUI的vue2.5框架
 - API接口除正常调用外，某些API接口为前置接口数据返回id拼接而成，这样的接口定义时正常定义，调用时url需重新指向：
 ```javascript
 //定义

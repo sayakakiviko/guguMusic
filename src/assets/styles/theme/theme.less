@@ -1,9 +1,11 @@
 #app {
   min-height: 100%;
   /***默认主题***/
-  .theme();
-  .van-index-bar__sidebar {
-    background-color: rgb(24, 24, 24, 0.5);
+  &.default{
+    .theme();
+    .van-index-bar__sidebar {
+      background-color: rgb(24, 24, 24, 0.5);
+    }
   }
 
   /***亮色主题***/
@@ -15,10 +17,13 @@
     .player .mini-player .icon-svg{
       color: #8b0c1a;
     }
+    .login .van-cell .van-field__control {
+      color: #666;
+    }
   }
 }
 
-.theme(@themeBg: #222,@themeBgSub: #333,@themeColor: #ffcd32,@fontColor: #999,@fontColorDn: #666,@fontColorSub: #fff){
+.theme(@themeBg: #222,@themeBgSub: #333,@themeColor: #ffcd32,@fontColor: #999999,@fontColorDn: #666,@fontColorSub: #fff){
   &{
     background-color: @themeBg;
   }
@@ -315,6 +320,29 @@
     }
     .singer .right-part .icon-svg{
       color: @fontColor;
+    }
+  }
+
+  //登录
+  .login{
+    background-color: @themeBg;
+    h2{
+      color: @fontColorSub;
+    }
+    .van-cell{
+      background-color: @themeBg;
+      &::after {
+        border-color: @fontColor;
+      }
+      .van-icon-clear {
+        color: @fontColorDn;
+      }
+      .van-field__control {
+        color: #ddd;
+      }
+    }
+    button{
+      background-color: @themeColor;
     }
   }
 

@@ -1,7 +1,7 @@
 <!-- @format -->
 
 <template>
-  <div id="app">
+  <div id="app" class="default">
     <div :class="{ pt50: $store.state.miniMode }">
       <headerBar></headerBar>
       <keep-alive>

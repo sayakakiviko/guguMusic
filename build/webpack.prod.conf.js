@@ -51,14 +51,14 @@ let webpackConfig = merge(baseWebpackConfig, {
         : { safe: true }
     }),
     // copy version
-    new CopyWebpackPlugin([
+    /*new CopyWebpackPlugin([
       {
         from: path.resolve(__dirname, '../version'),
         to: '../',
         toType: 'dir'
       }
-    ]),
-    // copy version
+    ]),*/
+    // 依赖文件
     new CopyWebpackPlugin([
       {
         from: path.resolve(__dirname, '../related')

@@ -59,9 +59,9 @@ module.exports = {
   },
   // 构建配置
   build: {
-    index: path.resolve(__dirname, '../dist/' + conf.version + '/index.html'),
+    index: path.resolve(__dirname, '../dist/index.html'),
     // 存放根路径
-    assetsRoot: path.resolve(__dirname, '../dist/' + conf.version),
+    assetsRoot: path.resolve(__dirname, '../dist/'),
     // 二级目录，存放静态资源文件的目录，位于dist文件夹下
     assetsSubDirectory: 'assets',
     // 发布路径，设置之后构建的产品文件在注入到index.html中的时候就会带上这里的发布路径
